@@ -1,0 +1,17 @@
+The good:
+
+On the upside, this code does attempt to add 192 things together. It also takes
+care to time and output the time that it takes to do this operation on both GPU
+and CPU. The code outputs some of the device information, which could be nice.
+The variable names seem to be appropriate, but that's about where the good ends.
+
+The bad:
+
+N is not defined. Blocks and threads change, but the size of the arrays don't.
+Memory is malloc'ed but not free'd. The code only implements the add operation.
+The input arrays are not constructed to the spec given in the assignment page.
+The (void**) in the cudamalloc is actually unnecessary (but this is just being
+nitpicky). If they try to do a % b at any time, they'll get an error for trying
+to reduce mod 0. Finally, the code doesn't output any thread or block information, it
+just assumes that whoever ran it knows(not necessarily bad, but calling without
+providing args might confuse someone).

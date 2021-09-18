@@ -1,0 +1,10 @@
+I collected timing data by running versions of a GPU kernel with divergence and
+without divergence, as well as a similar CPU algorithm. In all cases the increase
+in time caused by divergence was greater on the GPU than on the CPU. On the GPU,
+with the data that I collected, the slowdown ranged from roughly 2x to more than 16x
+depending on the block size and total number of threads. This significant slowdown shows
+that when possible GPU programmers must avoid causing thread divergence within blocks,
+and that when divergence is necessary, tuning and perhaps data reorganization should be done
+to ensure that threads within blocks follow the same execution path. Interestingly, the cost
+of divergence on the CPU was consistently around 1.2x, and is probably attributed to the extra
+array access for incrementing or decrementing, rather than the divergence itself.
