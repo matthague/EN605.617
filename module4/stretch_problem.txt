@@ -1,0 +1,18 @@
+Issues with the code:
+
+MIN_PRITNABLE is larger than MAX_PRINTABLE, so they would at least need to be swapped.
+I found that the values for these constants needed to be changed as well for my implementation.
+The device encrypt kernel takes unsigned int pointers as parameters, when it should take char
+pointers. The same sort of issue, but also not really issue depending on how characters are 
+read into the text and key arrays is present in pageable_transfer_execution and pinned_transfer_execution,
+ where char pointers should be used. The duration timing doesn't include the memory copy
+ to the device, so it doesn't show the performance difference between paged and pinned transfers.
+ num_threads is passed to the transfer methods as 'array size', but 
+this is wrong, and will lead to more threads being allocated than actually necessary, or not
+enough threads will be launched. Ideally, the code should read the length of the file, read that
+many chars into each array, and then launch enough threads for each char, using a default or supplied
+ block size. One final issue is that 'const unsigned int num_blocks = array_size/threads_per_block',
+And this means that num_blocks will be zero for any array_size < block_size. In effect, no threads would be launched.
+If array_size > block_size, not enough blocks would be launched. Something like 
+'int num_blocks = (array_size + threads_per_block - 1)/threads_per_block' would fix this issue.
+And finally, there is missing code for reading files, freeing memory, copying memory, and so forth.
