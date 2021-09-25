@@ -128,7 +128,7 @@ __host__ void readFile(const char *filename, int length, char* contents) {
     if (file == 0) {
         perror("Error: Could not open file...\n");
     }
-    char* copyString = (char *) malloc(length * sizeof(*copyString));
+    char* copyString = (char *) malloc((length + 1) * sizeof(*copyString));
     fgets(copyString, length + 1, file);
     memcpy(contents, copyString, length * sizeof(char));
     free(copyString);
