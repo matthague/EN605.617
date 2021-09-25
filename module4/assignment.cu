@@ -123,16 +123,13 @@ __host__ int getFileLength(const char *filename) {
 }
 
 /* open the file and read it's contents into memory */
-__host__ char *readFile(const char *filename, int length) {
+__host__ void readFile(const char *filename, int length, char* contents) {
     FILE *file = fopen(filename, "r");
     if (file == 0) {
         perror("Error: Could not open file...\n");
-        return NULL;
     }
-    char *contents = (char *) malloc(length * sizeof(*contents));
     fgets(contents, length + 1, file);
     fclose(file);
-    return contents;
 }
 
 __global__ void
@@ -297,7 +294,8 @@ int main(int argc, char **argv) {
             printf("Error: Plaintext size is invalid...\n");
             return -1;
         }
-        char *plaintext = readFile(argv[3], plaintext_length);
+        char *plaintext = (char *) malloc(plaintext_length * sizeof(*plaintext));
+        readFile(argv[3], plaintext_length, plaintext);
 
         // load key
         int key_length = getFileLength(argv[4]);
@@ -309,7 +307,8 @@ int main(int argc, char **argv) {
             printf("Error: Key size is invalid...\n");
             return -1;
         }
-        char *key = readFile(argv[4], key_length);
+        char *key = (char *) malloc(key_length * sizeof(*key));
+        readFile(argv[4], key_length, key);
 
         // do cipher operations
         caesarCipher(plaintext, key, plaintext_length, key_length, blockSize);
