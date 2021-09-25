@@ -128,7 +128,10 @@ __host__ void readFile(const char *filename, int length, char* contents) {
     if (file == 0) {
         perror("Error: Could not open file...\n");
     }
-    fgets(contents, length + 1, file);
+    char* copyString = (char *) malloc(length * sizeof(*copyString));
+    fgets(copyString, length + 1, file);
+    memcpy(contents, copyString, length * sizeof(char));
+    free(copyString);
     fclose(file);
 }
 
@@ -313,8 +316,10 @@ int main(int argc, char **argv) {
         // do cipher operations
         caesarCipher(plaintext, key, plaintext_length, key_length, blockSize);
 
-        free(plaintext);
+        //free
         free(key);
+        free(plaintext);
+
     }
 
     return 0;
