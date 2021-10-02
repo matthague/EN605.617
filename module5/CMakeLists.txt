@@ -1,10 +1,8 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.8)
 set(CMAKE_CUDA_COMPILER /usr/local/cuda/bin/nvcc)
 project(assignment CUDA)
 
-set(CMAKE_CUDA_STANDARD 23)
-
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -std=c++14")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS}")
 
 add_executable(assignment assignment.cu)
 
