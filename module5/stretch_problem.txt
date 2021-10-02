@@ -1,0 +1,11 @@
+The major element of the assignment that we don't see in the stretch
+code is anything to do with the constant memory. So we don't get to see
+an example of cudaMemcpyToSymbol() anythinge else. It's possible that this
+setup and use of constant memory would happen in the switch(module): statement,
+but we only see case 5 and the default, and the code implies that case 6 would
+utilize the constant memory. I would like to see this code give the user some
+command line configuration options, but most of the parameters seem to be fixed.
+Finally, I'm a fan of the outputCardInfo(), but I can see this being annoying--
+the person running this code probably wants to understand the performance differences
+that the memory types provide, and hopefully the code is written to be
+agnostic to the actual hardware details.
