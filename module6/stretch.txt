@@ -1,0 +1,18 @@
+The good:
+Constant values that appear to be changeable for different configs.
+Uses register and shared memory to do a multiply op.
+Uses events to time kernel.
+Has debug output that can be enabled / disabled.
+Malloc / free is correct.
+Compares outputs to make sure they are the same.
+
+The bad:
+Uses a var called num_threads = num_thrds... redundant.
+Confusing blocksize/threadsize computations, and they happen inside the
+call to launch the kernel. Do it somewhere else, and make it readable.
+Doesn't do modulo, subtract, or add operations(maybe does add?).
+Some atomicAdd function is called, but this only makes semi-sense in the
+context of doing linear multiplication.
+Function and variable naming is kind of confusing, it talks about doing
+'linear' and 'matrix' multiplications, but these operations are not immediately
+clear to the reviewer. Readability is poor.
