@@ -14,3 +14,6 @@ echo -e "\n\nDEMO 2\n"
 
 echo -e "\n\nDEMO 3\n"
 ./assignment 65536 1024 128
+
+echo -e "\n\nDEMO 4\n"
+./assignment 65536 256 4096
