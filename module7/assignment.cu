@@ -76,7 +76,9 @@ doQuadKernelRegular(int *inputA, int *inputB, int *output, int totalThreads, int
 }
 
 __host__ float
-doQuadKernelStream(int *inputA, int *inputB, int *output, int totalThreads, int loop_iterations) {
+doQuadKernelStream(int *inputA, int *inputB, int *output, int totalThreads, int blockSize, int loop_iterations) {
+    int numBlocks = totalThreads / blockSize;
+
     // allocate device global memory
     int *device_inputA, *device_inputB, *device_output;
     cudaMalloc(&device_inputA, totalThreads * sizeof(*device_inputA));
@@ -99,7 +101,7 @@ doQuadKernelStream(int *inputA, int *inputB, int *output, int totalThreads, int 
     cudaMemcpyAsync(device_inputB, inputB, totalThreads * sizeof(*device_inputB), cudaMemcpyHostToDevice, stream);
 
     // execute
-    quadKernel<<<totalThreads, 1, 1, stream>>>(device_inputA, device_inputB, device_output, loop_iterations);
+    quadKernel<<<numBlocks, blockSize, 1, stream>>>(device_inputA, device_inputB, device_output, loop_iterations);
 
     // copy results back
     cudaMemcpyAsync(output, device_output, 4 * totalThreads * sizeof(*output), cudaMemcpyDeviceToHost, stream);
@@ -140,7 +142,7 @@ __host__ void executeComparison(int totalThreads, int blockSize, int loop_iterat
 
     // time the kernels using different memory
     float regularTime = doQuadKernelRegular(inputA, inputB, regularOutput, totalThreads, blockSize, loop_iterations);
-    float streamTime = doQuadKernelStream(inputA, inputB, streamOutput, totalThreads, loop_iterations);
+    float streamTime = doQuadKernelStream(inputA, inputB, streamOutput, totalThreads, blockSize, loop_iterations);
 
     // verify the outputs
     assert(validateResults(regularOutput, streamOutput, 4 * totalThreads));
@@ -196,7 +198,7 @@ __host__ int main(int argc, char **argv) {
 
     // print block and thread count info
     printf("Total thread count: %d\n", totalThreads);
-    printf("Threads per block for regular kernel: %d\n", blockSize);
+    printf("Threads per block: %d\n", blockSize);
     printf("Kernel loop iterations: %d\n\n", loop_iterations);
 
     // start the main comparison
