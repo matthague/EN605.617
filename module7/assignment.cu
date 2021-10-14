@@ -106,6 +106,7 @@ doQuadKernelStream(int *inputA, int *inputB, int *output, int totalThreads, int 
 
     // synchronize the stream
     cudaStreamSynchronize(stream);
+    cudaDeviceSynchronize(); //todo check this??
 
     // stop the clock
     cudaEventRecord(stop, 0);
