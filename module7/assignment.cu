@@ -99,7 +99,7 @@ doQuadKernelStream(int *inputA, int *inputB, int *output, int totalThreads, int 
     cudaMemcpyAsync(device_inputB, inputB, totalThreads * sizeof(*device_inputB), cudaMemcpyHostToDevice, stream);
 
     // execute
-    quadKernel<<<totalThreads, 1, 0, stream>>>(device_inputA, device_inputB, device_output, loop_iterations);
+    quadKernel<<<totalThreads, 1, 1, stream>>>(device_inputA, device_inputB, device_output, loop_iterations);
 
     // copy results back
     cudaMemcpyAsync(output, device_output, 4 * totalThreads * sizeof(*output), cudaMemcpyDeviceToHost, stream);
