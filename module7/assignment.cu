@@ -17,7 +17,7 @@ __host__ bool validateResults(int *a, int *b, int N) {
     for (int i = 0; i < N; i++) {
         if (a[i] != b[i]) {
             printf("expected: %d, got: %d, i: %d\n", a[i], b[i], i);
-            ///return false;
+            return false;
         }
     }
     return true;
@@ -106,7 +106,6 @@ doQuadKernelStream(int *inputA, int *inputB, int *output, int totalThreads, int 
 
     // synchronize the stream
     cudaStreamSynchronize(stream);
-    cudaDeviceSynchronize(); //todo check this??
 
     // stop the clock
     cudaEventRecord(stop, 0);
@@ -128,10 +127,10 @@ __host__ void executeComparison(int totalThreads, int blockSize, int loop_iterat
     int *regularOutput;
     int *streamOutput;
 
-    cudaMallocHost(&inputA, totalThreads * sizeof(*inputA));
-    cudaMallocHost(&inputB, totalThreads * sizeof(*inputB));
-    cudaMallocHost(&regularOutput, 4 * totalThreads * sizeof(*regularOutput)); // times 4 because we do 4 operations...
-    cudaMallocHost(&streamOutput, 4 * totalThreads * sizeof(*streamOutput));
+    cudaHostAlloc(&inputA, totalThreads * sizeof(*inputA), cudaHostAllocDefault);
+    cudaHostAlloc(&inputB, totalThreads * sizeof(*inputB), cudaHostAllocDefault);
+    cudaHostAlloc(&regularOutput, 4 * totalThreads * sizeof(*regularOutput), cudaHostAllocDefault); // times 4 because we do 4 operations...
+    cudaHostAlloc(&streamOutput, 4 * totalThreads * sizeof(*streamOutput), cudaHostAllocDefault);
 
     // fill the input arrays with random data
     for (int i = 0; i < totalThreads; i++) {
