@@ -18,3 +18,7 @@ echo -e "\n\nDEMO 3\n"
 
 echo -e "\n\nDEMO 4\n"
 ./assignment 16777216 4 64
+
+echo -e "\n\nMAKING AND RUNNING STRETCH\n"
+nvcc stretch_problem.cu -o stretch
+./stretch
