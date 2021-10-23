@@ -1,0 +1,1 @@
+i plan on using both the cuSOLVER SVD functionality and cuRAND random number generation within my project. SVD will be used for a sparse image representation, and cuRAND will be used to add additive white gaussian noise to the images.
