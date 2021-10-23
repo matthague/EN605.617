@@ -8,7 +8,7 @@ FindCUDA()
 add_executable(assignment assignment.cu)
 
 
-target_link_libraries(assignment PRIVATE CUDA::cudart CUDA::cublas CUDA::cusolver)
+target_link_libraries(assignment PRIVATE ${CUDA_cusolver_LIBRARY} ${CUDA_curand_LIBRARY} ${CUDA_CUBLAS_LIBRARIES})
 
 set_target_properties(
         assignment
