@@ -3,7 +3,7 @@ project(assignment CUDA CXX)
 
 set(CMAKE_CUDA_STANDARD 23)
 
-FindCUDA()
+FindCUDA
 
 add_executable(assignment assignment.cu)
 
