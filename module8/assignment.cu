@@ -168,6 +168,7 @@ int main(int argc, char* argv[]) {
     // parse args
     if(argc > 3) {
         printUsage(argv);
+	return -1;
     }
 
     int matrixSize = DEFAULT_MATRIX_SIZE;

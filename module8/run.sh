@@ -6,7 +6,7 @@ echo -e "\n\nDEMO 0\n"
 ./assignment
 
 echo -e "\n\nDEMO 1\n"
-./assignment 2048 1024
+./assignment 512 512
 
 echo -e "\n\nDEMO 2\n"
 ./assignment 1024 32
@@ -16,4 +16,4 @@ echo -e "\n\nDEMO 3\n"
 
 
 echo -e "\n\nDEMO 4\n"
-./assignment 4096 1024
+./assignment 1024 1024
