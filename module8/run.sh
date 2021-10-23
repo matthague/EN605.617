@@ -1,4 +1,3 @@
-cmake .
 make -j
 
 ./assignment 1 1 1 1
