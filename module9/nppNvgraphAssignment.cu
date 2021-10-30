@@ -11,7 +11,7 @@
 #include <npp.h>
 #include <nppi.h>
 
-#include <nvgraph.h>
+#include "nvgraph.h"
 
 #define DEFAULT_GRAPH_SIZE 20
 
@@ -83,12 +83,15 @@ float doNPPBorderFinding(string inputFilename) {
 float doNvgraphCountTriangles(int graphSize) {
     // setup handles and space for graph structure using COO topology
     nvgraphHandle_t handle;
-    nvgraphGraphDescr_t graph;
+    nvgraphGraphDescr_t coograph;
+    nvgraphGraphDescr_t csrgraph;
     nvgraphCOOTopology32I_st* COO_input = (nvgraphCOOTopology32I_st*) malloc(sizeof(struct nvgraphCOOTopology32I_st));
+    nvgraphCSRTopology32I_st* CSR_input = (nvgraphCSRTopology32I_st*) malloc(sizeof(struct nvgraphCSRTopology32I_st));
 
-    // init nvgraph hande and descriptor
+    // init nvgraph hande and descriptors
     nvgraphCreate(&handle);
-    nvgraphCreateGraphDescr (handle, &graph);
+    nvgraphCreateGraphDescr (handle, &coograph);
+    nvgraphCreateGraphDescr (handle, &csrgraph);
 
     // setup the graph edges and vertices
     const size_t numVertices = graphSize;
@@ -110,7 +113,10 @@ float doNvgraphCountTriangles(int graphSize) {
     COO_input->source_indices = source_indices;
     COO_input->destination_indices = destination_indices;
 
-    nvgraphSetGraphStructure(handle, graph, (void*)COO_input, NVGRAPH_COO_32);
+    nvgraphSetGraphStructure(handle, coograph, (void*)COO_input, NVGRAPH_COO_32);
+
+    // convert the topology for the algorithm
+    nvgraphConvertGraph(handle, coograph, csrgraph, NVGRAPH_CSR_32);
 
     // setup timing
     float kernelTime;
@@ -121,7 +127,7 @@ float doNvgraphCountTriangles(int graphSize) {
 
     // count the triangles
     uint64_t triangleCount;
-    nvgraphTriangleCount(handle, graph, &triangleCount);
+    nvgraphTriangleCount(handle, csrgraph, &triangleCount);
 
     // stop the clock
     cudaEventRecord(stop, 0);
@@ -130,7 +136,8 @@ float doNvgraphCountTriangles(int graphSize) {
 
     // free resources
     free(COO_input);
-    nvgraphDestroyGraphDescr(handle, graph);
+    nvgraphDestroyGraphDescr(handle, coograph);
+    nvgraphDestroyGraphDescr(handle, csrgraph);
     nvgraphDestroy(handle);
 
     // return time
