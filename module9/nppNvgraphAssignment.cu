@@ -80,7 +80,7 @@ float doNPPBorderFinding(string inputFilename) {
     return kernelTime;
 }
 
-float doNvgraphCountTriangles(int graphSize) {
+float doNvgraphSingleShortestPath(int graphSize) {
     // setup handles and space for graph structure using COO topology
     nvgraphHandle_t handle;
     nvgraphGraphDescr_t coograph;
@@ -125,9 +125,10 @@ float doNvgraphCountTriangles(int graphSize) {
     cudaEventCreate(&stop);
     cudaEventRecord(start, 0);
 
-    // count the triangles
-    uint64_t triangleCount;
-    nvgraphTriangleCount(handle, csrgraph, &triangleCount);
+    // run the main alg
+    int source = 0;
+    size_t sspIndex = 0;
+    nvgraphSssp(handle, csrgraph, 0, &source, sspIndex);
 
     // stop the clock
     cudaEventRecord(stop, 0);
@@ -161,12 +162,12 @@ int main(int argc, char *argv[]) {
     }
 
     // run each method and time
-    float triangleCountingTime = doNvgraphCountTriangles(graphSize);
+    float sspTime = doNvgraphSingleShortestPath(graphSize);
     float borderDetectionTime = doNPPBorderFinding(imageFile);
 
     // print results
     printf("Using Graph Size %d...\n", graphSize);
-    printf("Triangle Counting Using NVGRAPH... : %f (ms)\n", triangleCountingTime);
+    printf("Single Shortest Path Using NVGRAPH... : %f (ms)\n", sspTime);
     printf("Border Detection Using NPP... : %f (ms)\n", borderDetectionTime);
 
     return 0;
