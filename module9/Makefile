@@ -2,7 +2,7 @@ CC = nvcc
 
 all: clean thrustAssignment nppNvgraphAssignment
 
-assignment: thrustAssignment.cu
+thrustAssignment: thrustAssignment.cu
 	$(CC) $^ -o $@ -lcudart
 
 nppNvgraphAssignment: nppNvgraphAssignment.cu
