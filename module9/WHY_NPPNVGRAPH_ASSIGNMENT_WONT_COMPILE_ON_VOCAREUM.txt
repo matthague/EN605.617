@@ -1,0 +1,10 @@
+libfreeimage3 and libfreeimage-dev are not installed.
+
+a simple 'sudo apt-get install libfreeimage3 libfreeimage-dev'
+would solve the problem, but I do not have the permissions to do this.
+
+included is the output from running on my system, and a run.sh file that
+will compile and run the tests if freeimage is actually installed on the system
+
+included is also a CMakeLists.txt file that will use cmake to build the targets on
+any updated system (cmake 3.21 or later)
