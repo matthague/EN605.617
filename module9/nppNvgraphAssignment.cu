@@ -11,7 +11,7 @@
 #include <npp.h>
 #include <nppi.h>
 
-#include "nvgraph.h"
+#include <nvgraph.h>
 
 #define DEFAULT_GRAPH_SIZE 20
 
