@@ -25,25 +25,21 @@
 // Error handler for FreeImage library.
 //  In case this handler is invoked, it throws an NPP exception.
 void
-FreeImageErrorHandler(FREE_IMAGE_FORMAT oFif, const char *zMessage)
-{
+FreeImageErrorHandler(FREE_IMAGE_FORMAT oFif, const char *zMessage) {
     throw npp::Exception(zMessage);
 }
 
-namespace npp
-{
+namespace npp {
     // Load a gray-scale image from disk.
     void
-    loadImage(const std::string &rFileName, ImageCPU_8u_C1 &rImage)
-    {
+    loadImage(const std::string &rFileName, ImageCPU_8u_C1 &rImage) {
         // set your own FreeImage error handler
         FreeImage_SetOutputMessage(FreeImageErrorHandler);
 
         FREE_IMAGE_FORMAT eFormat = FreeImage_GetFileType(rFileName.c_str());
 
         // no signature? try to guess the file format from the file extension
-        if (eFormat == FIF_UNKNOWN)
-        {
+        if (eFormat == FIF_UNKNOWN) {
             eFormat = FreeImage_GetFIFFromFilename(rFileName.c_str());
         }
 
@@ -51,8 +47,7 @@ namespace npp
         // check that the plugin has reading capabilities ...
         FIBITMAP *pBitmap;
 
-        if (FreeImage_FIFSupportsReading(eFormat))
-        {
+        if (FreeImage_FIFSupportsReading(eFormat)) {
             pBitmap = FreeImage_Load(eFormat, rFileName.c_str());
         }
 
@@ -66,12 +61,11 @@ namespace npp
 
         // Copy the FreeImage data into the new ImageCPU
         unsigned int nSrcPitch = FreeImage_GetPitch(pBitmap);
-        const Npp8u *pSrcLine = FreeImage_GetBits(pBitmap) + nSrcPitch * (FreeImage_GetHeight(pBitmap) -1);
+        const Npp8u *pSrcLine = FreeImage_GetBits(pBitmap) + nSrcPitch * (FreeImage_GetHeight(pBitmap) - 1);
         Npp8u *pDstLine = oImage.data();
         unsigned int nDstPitch = oImage.pitch();
 
-        for (size_t iLine = 0; iLine < oImage.height(); ++iLine)
-        {
+        for (size_t iLine = 0; iLine < oImage.height(); ++iLine) {
             memcpy(pDstLine, pSrcLine, oImage.width() * sizeof(Npp8u));
             pSrcLine -= nSrcPitch;
             pDstLine += nDstPitch;
@@ -84,19 +78,17 @@ namespace npp
 
     // Save an gray-scale image to disk.
     void
-    saveImage(const std::string &rFileName, const ImageCPU_8u_C1 &rImage)
-    {
+    saveImage(const std::string &rFileName, const ImageCPU_8u_C1 &rImage) {
         // create the result image storage using FreeImage so we can easily
         // save
         FIBITMAP *pResultBitmap = FreeImage_Allocate(rImage.width(), rImage.height(), 8 /* bits per pixel */);
         NPP_ASSERT_NOT_NULL(pResultBitmap);
-        unsigned int nDstPitch   = FreeImage_GetPitch(pResultBitmap);
-        Npp8u *pDstLine = FreeImage_GetBits(pResultBitmap) + nDstPitch * (rImage.height()-1);
+        unsigned int nDstPitch = FreeImage_GetPitch(pResultBitmap);
+        Npp8u *pDstLine = FreeImage_GetBits(pResultBitmap) + nDstPitch * (rImage.height() - 1);
         const Npp8u *pSrcLine = rImage.data();
         unsigned int nSrcPitch = rImage.pitch();
 
-        for (size_t iLine = 0; iLine < rImage.height(); ++iLine)
-        {
+        for (size_t iLine = 0; iLine < rImage.height(); ++iLine) {
             memcpy(pDstLine, pSrcLine, rImage.width() * sizeof(Npp8u));
             pSrcLine += nSrcPitch;
             pDstLine -= nDstPitch;
@@ -110,8 +102,7 @@ namespace npp
 
     // Load a gray-scale image from disk.
     void
-    loadImage(const std::string &rFileName, ImageNPP_8u_C1 &rImage)
-    {
+    loadImage(const std::string &rFileName, ImageNPP_8u_C1 &rImage) {
         ImageCPU_8u_C1 oImage;
         loadImage(rFileName, oImage);
         ImageNPP_8u_C1 oResult(oImage);
@@ -120,8 +111,7 @@ namespace npp
 
     // Save an gray-scale image to disk.
     void
-    saveImage(const std::string &rFileName, const ImageNPP_8u_C1 &rImage)
-    {
+    saveImage(const std::string &rFileName, const ImageNPP_8u_C1 &rImage) {
         ImageCPU_8u_C1 oHostImage(rImage.size());
         // copy the device result data
         rImage.copyTo(oHostImage.data(), oHostImage.pitch());

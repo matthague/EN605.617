@@ -19,14 +19,13 @@
 //! Constructor, default
 ////////////////////////////////////////////////////////////////////////////////
 npp::StopWatchLinux::StopWatchLinux() :
-    start_time(),
-    diff_time(0.0),
-    total_time(0.0),
-    running(false)
-{ }
+        start_time(),
+        diff_time(0.0),
+        total_time(0.0),
+        running(false) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Destructor
 ////////////////////////////////////////////////////////////////////////////////
-npp::StopWatchLinux::~StopWatchLinux() { }
+npp::StopWatchLinux::~StopWatchLinux() {}
 

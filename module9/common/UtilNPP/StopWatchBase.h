@@ -13,57 +13,56 @@
 #define NV_NPP_UTIL_STOP_WATCH_BASE_H
 
 
-namespace npp
-{
+namespace npp {
 
     /// Simple stop watch class
     ///     This class uses high-precision timers. It is implemented
     /// using templates and inline functions to cause minimal call-overhead
     /// and provide the most accurate timings.
     template<class OSPolicy>
-    class StopWatchBase : public OSPolicy
-    {
-        public:
+    class StopWatchBase : public OSPolicy {
+    public:
 
-            // generic, specialized type
-            typedef StopWatchBase<OSPolicy>   SelfType;
-            // generic, specialized type pointer
-            typedef StopWatchBase<OSPolicy>  *SelfTypePtr;
+        // generic, specialized type
+        typedef StopWatchBase<OSPolicy> SelfType;
+        // generic, specialized type pointer
+        typedef StopWatchBase<OSPolicy> *SelfTypePtr;
 
-        public:
+    public:
 
-            //! Constructor, default
-            StopWatchBase();
+        //! Constructor, default
+        StopWatchBase();
 
-            // Destructor
-            ~StopWatchBase();
+        // Destructor
+        ~StopWatchBase();
 
-        public:
+    public:
 
-            //! Start time measurement
-            inline void start();
+        //! Start time measurement
+        inline void start();
 
-            //! Stop time measurement
-            inline void stop();
+        //! Stop time measurement
+        inline void stop();
 
-            //! Reset time counters to zero
-            inline void reset();
+        //! Reset time counters to zero
+        inline void reset();
 
-            //! Time in msec. after start. If the stop watch is still running (i.e. there
-            //! was no call to stop()) then the elapsed time is returned, otherwise the
-            //! time between the last start() and stop call is returned
-            inline const double elapsed() const;
+        //! Time in msec. after start. If the stop watch is still running (i.e. there
+        //! was no call to stop()) then the elapsed time is returned, otherwise the
+        //! time between the last start() and stop call is returned
+        inline const double elapsed() const;
 
-        private:
+    private:
 
-            //! Constructor, copy (not implemented)
-            StopWatchBase(const StopWatchBase &);
+        //! Constructor, copy (not implemented)
+        StopWatchBase(const StopWatchBase &);
 
-            //! Assignment operator (not implemented)
-            StopWatchBase &operator=(const StopWatchBase &);
+        //! Assignment operator (not implemented)
+        StopWatchBase &operator=(const StopWatchBase &);
     };
 
     // include, implementation
+
 #include "StopWatchBase.inl"
 
 } // npp namespace

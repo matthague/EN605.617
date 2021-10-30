@@ -22,10 +22,11 @@ namespace npp
     typedef StopWatchBase<StopWatchWin>  StopWatch;
 } // npp namesapce
 #else
+
 #include "StopWatchLinux.h"
-namespace npp
-{
-    typedef StopWatchBase<StopWatchLinux>  StopWatch;
+
+namespace npp {
+    typedef StopWatchBase<StopWatchLinux> StopWatch;
 } // npp namesapce
 #endif
 

@@ -15,22 +15,20 @@
 ////////////////////////////////////////////////////////////////////////////////
 template<class OSPolicy>
 StopWatchBase<OSPolicy>::StopWatchBase() :
-    OSPolicy()
-{ }
+        OSPolicy() {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //! Destructor
 ////////////////////////////////////////////////////////////////////////////////
 template<class OSPolicy>
-StopWatchBase<OSPolicy>::~StopWatchBase() { }
+StopWatchBase<OSPolicy>::~StopWatchBase() {}
 
 ///////////////////////////////////////////////////////////////////////////////
 //! Start time measurement
 ////////////////////////////////////////////////////////////////////////////////
 template<class OSPolicy>
 inline void
-StopWatchBase<OSPolicy>::start()
-{
+StopWatchBase<OSPolicy>::start() {
     OSPolicy::start();
 }
 
@@ -39,8 +37,7 @@ StopWatchBase<OSPolicy>::start()
 ////////////////////////////////////////////////////////////////////////////////
 template<class OSPolicy>
 inline void
-StopWatchBase<OSPolicy>::stop()
-{
+StopWatchBase<OSPolicy>::stop() {
     OSPolicy::stop();
 }
 
@@ -51,8 +48,7 @@ StopWatchBase<OSPolicy>::stop()
 ////////////////////////////////////////////////////////////////////////////////
 template<class OSPolicy>
 inline void
-StopWatchBase<OSPolicy>::reset()
-{
+StopWatchBase<OSPolicy>::reset() {
     OSPolicy::reset();
 }
 
@@ -63,7 +59,6 @@ StopWatchBase<OSPolicy>::reset()
 ////////////////////////////////////////////////////////////////////////////////
 template<class OSPolicy>
 inline const double
-StopWatchBase<OSPolicy>::elapsed() const
-{
+StopWatchBase<OSPolicy>::elapsed() const {
     return OSPolicy::elapsed();
 }

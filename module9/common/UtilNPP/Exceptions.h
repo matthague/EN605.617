@@ -18,8 +18,7 @@
 #include <iostream>
 
 /// All npp related C++ classes are put into the npp namespace.
-namespace npp
-{
+namespace npp {
 
     /// Exception base class.
     ///     This exception base class will be used for everything C++ throught
@@ -28,85 +27,77 @@ namespace npp
     /// containing the name of the file as well as the line number where the exception was thrown.
     ///     The easiest way of throwing exceptions and providing filename and line number is
     /// to use one of the ASSERT macros defined for that purpose.
-    class Exception
-    {
-        public:
-            /// Constructor.
-            /// \param rMessage A message with information as to why the exception was thrown.
-            /// \param rFileName The name of the file where the exception was thrown.
-            /// \param nLineNumber Line number in the file where the exception was thrown.
-            explicit
-            Exception(const std::string &rMessage = "", const std::string &rFileName = "", unsigned int nLineNumber = 0)
-                : sMessage_(rMessage), sFileName_(rFileName), nLineNumber_(nLineNumber)
-            { };
+    class Exception {
+    public:
+        /// Constructor.
+        /// \param rMessage A message with information as to why the exception was thrown.
+        /// \param rFileName The name of the file where the exception was thrown.
+        /// \param nLineNumber Line number in the file where the exception was thrown.
+        explicit
+        Exception(const std::string &rMessage = "", const std::string &rFileName = "", unsigned int nLineNumber = 0)
+                : sMessage_(rMessage), sFileName_(rFileName), nLineNumber_(nLineNumber) {};
 
-            Exception(const Exception &rException)
-                : sMessage_(rException.sMessage_), sFileName_(rException.sFileName_), nLineNumber_(rException.nLineNumber_)
-            { };
+        Exception(const Exception &rException)
+                : sMessage_(rException.sMessage_), sFileName_(rException.sFileName_),
+                  nLineNumber_(rException.nLineNumber_) {};
 
-            virtual
-            ~Exception()
-            { };
+        virtual
+        ~Exception() {};
 
-            /// Get the exception's message.
-            const
-            std::string &
-            message()
-            const
-            {
-                return sMessage_;
-            }
+        /// Get the exception's message.
+        const
+        std::string &
+        message()
+        const {
+            return sMessage_;
+        }
 
-            /// Get the exception's file info.
-            const
-            std::string &
-            fileName()
-            const
-            {
-                return sFileName_;
-            }
+        /// Get the exception's file info.
+        const
+        std::string &
+        fileName()
+        const {
+            return sFileName_;
+        }
 
-            /// Get the exceptions's line info.
-            unsigned int
-            lineNumber()
-            const
-            {
-                return nLineNumber_;
-            }
+        /// Get the exceptions's line info.
+        unsigned int
+        lineNumber()
+        const {
+            return nLineNumber_;
+        }
 
 
-            /// Create a clone of this exception.
-            ///      This creates a new Exception object on the heap. It is
-            /// the responsibility of the user of this function to free this memory
-            /// (delete x).
-            virtual
-            Exception *
-            clone()
-            const
-            {
-                return new Exception(*this);
-            }
+        /// Create a clone of this exception.
+        ///      This creates a new Exception object on the heap. It is
+        /// the responsibility of the user of this function to free this memory
+        /// (delete x).
+        virtual
+        Exception *
+        clone()
+        const {
+            return new Exception(*this);
+        }
 
-            /// Create a single string with all the exceptions information.
-            ///     The virtual toString() method is used by the operator<<()
-            /// so that all exceptions derived from this base-class can print
-            /// their full information correctly even if a reference to their
-            /// exact type is not had at the time of printing (i.e. the basic
-            /// operator<<() is used).
-            virtual
-            std::string
-            toString()
-            const
-            {
-                std::ostringstream oOutputString;
-                oOutputString << fileName() << ":" << lineNumber() << ": " << message();
-                return oOutputString.str();
-            }
+        /// Create a single string with all the exceptions information.
+        ///     The virtual toString() method is used by the operator<<()
+        /// so that all exceptions derived from this base-class can print
+        /// their full information correctly even if a reference to their
+        /// exact type is not had at the time of printing (i.e. the basic
+        /// operator<<() is used).
+        virtual
+        std::string
+        toString()
+        const {
+            std::ostringstream oOutputString;
+            oOutputString << fileName() << ":" << lineNumber() << ": " << message();
+            return oOutputString.str();
+        }
 
-        private:
-            std::string sMessage_;      ///< Message regarding the cause of the exception.
-            std::string sFileName_;     ///< Name of the file where the exception was thrown.
-            unsigned int nLineNumber_;  ///< Line number in the file where the exception was thrown
+    private:
+        std::string sMessage_;      ///< Message regarding the cause of the exception.
+        std::string sFileName_;     ///< Name of the file where the exception was thrown.
+        unsigned int nLineNumber_;  ///< Line number in the file where the exception was thrown
     };
 
     /// Output stream inserter for Exception.
@@ -114,8 +105,7 @@ namespace npp
     /// \param rException The exception that's being written.
     /// \return Reference to the output stream being used.
     std::ostream &
-    operator << (std::ostream &rOutputStream, const Exception &rException)
-    {
+    operator<<(std::ostream &rOutputStream, const Exception &rException) {
         rOutputStream << rException.toString();
         return rOutputStream;
     }
