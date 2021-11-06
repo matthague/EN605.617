@@ -165,20 +165,20 @@ int RunKernel(cl_context* context, cl_program* program, const char* kernel_str, 
 	cl_mem memObjects[3] = {*memObj0, *memObj1, *memObj2};
 	// Create kernel objects
 
-	kernel = clCreateKernel(program, kernel_str, NULL);
-	if (kernel == NULL) {
+	*kernel = clCreateKernel(*program, kernel_str, NULL);
+	if (*kernel == NULL) {
 			std::cerr << "Failed to create " << kernel_str << std::endl;
-			Cleanup(context, commandQueue, program, kernel, memObjects);
+			Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
 			return 1;
 	}
 
 	// Set the kernel arguments (result, a, b)
-	errNum = clSetKernelArg(kernel, 0, sizeof(cl_mem), &memObjects[0]);
-	errNum |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &memObjects[1]);
-	errNum |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &memObjects[2]);
+	errNum = clSetKernelArg(*kernel, 0, sizeof(cl_mem), &memObjects[0]);
+	errNum |= clSetKernelArg(*kernel, 1, sizeof(cl_mem), &memObjects[1]);
+	errNum |= clSetKernelArg(*kernel, 2, sizeof(cl_mem), &memObjects[2]);
 	if (errNum != CL_SUCCESS) {
 			std::cerr << "Error setting kernel arguments." << std::endl;
-			Cleanup(context, commandQueue, program, kernel, memObjects);
+			Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
 			return 1;
 	}
 
@@ -186,22 +186,22 @@ int RunKernel(cl_context* context, cl_program* program, const char* kernel_str, 
 	size_t localWorkSize[1] = {1};
 
 	// Queue the kernel up for execution across the array
-	errNum = clEnqueueNDRangeKernel(commandQueue, kernel, 1, NULL,
+	errNum = clEnqueueNDRangeKernel(*commandQueue, *kernel, 1, NULL,
 																	globalWorkSize, localWorkSize,
 																	0, NULL, NULL);
 	if (errNum != CL_SUCCESS) {
 			std::cerr << "Error queuing kernel for execution." << std::endl;
-			Cleanup(context, commandQueue, program, kernel, memObjects);
+			Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
 			return 1;
 	}
 
 	// Read the output buffer back to the Host
-	errNum = clEnqueueReadBuffer(commandQueue, memObjects[2], CL_TRUE,
+	errNum = clEnqueueReadBuffer(*commandQueue, memObjects[2], CL_TRUE,
 															 0, ARRAY_SIZE * sizeof(float), result,
 															 0, NULL, NULL);
 	if (errNum != CL_SUCCESS) {
 			std::cerr << "Error reading result buffer." << std::endl;
-			Cleanup(context, commandQueue, program, kernel, memObjects);
+			Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
 			return 1;
 	}
 	return 0;
