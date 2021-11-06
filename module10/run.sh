@@ -11,6 +11,3 @@ echo -e "\nOpenCL Demo 2\n"
 
 echo -e "\nOpenCL Demo 3\n"
 ./assignment 65536
-
-echo -e "\nOpenCL Demo 4\n"
-./assignment 2097152
