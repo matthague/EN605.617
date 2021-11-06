@@ -164,7 +164,7 @@ int RunKernel(cl_context* context, cl_program* program, const char* kernel_str, 
 	cl_int errNum;
 	cl_mem memObjects[3] = {*memObj0, *memObj1, *memObj2};
 	float result[ARRAY_SIZE];
-	
+
 	// Create kernel object
 	*kernel = clCreateKernel(*program, kernel_str, NULL);
 	if (*kernel == NULL) {
@@ -198,7 +198,7 @@ int RunKernel(cl_context* context, cl_program* program, const char* kernel_str, 
 
 	// Read the output buffer back to the Host
 	errNum = clEnqueueReadBuffer(*commandQueue, memObjects[2], CL_TRUE,
-															 0, ARRAY_SIZE * sizeof(float), *result,
+															 0, ARRAY_SIZE * sizeof(float), result,
 															 0, NULL, NULL);
 	if (errNum != CL_SUCCESS) {
 			std::cerr << "Error reading result buffer." << std::endl;
