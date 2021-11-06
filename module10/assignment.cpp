@@ -161,67 +161,68 @@ void Cleanup(cl_context context, cl_command_queue commandQueue,
 
 }
 
-double RunKernel(cl_context* context, cl_program* program, const char* kernel_str, cl_kernel* kernel, cl_command_queue *commandQueue, int ARRAY_SIZE, cl_mem* memObj0, cl_mem* memObj1, cl_mem* memObj2) {
-	cl_int errNum;
-	cl_mem memObjects[3] = {*memObj0, *memObj1, *memObj2};
-	float result[ARRAY_SIZE];
+double RunKernel(cl_context *context, cl_program *program, const char *kernel_str, cl_kernel *kernel,
+                 cl_command_queue *commandQueue, int ARRAY_SIZE, cl_mem *memObj0, cl_mem *memObj1, cl_mem *memObj2) {
+    cl_int errNum;
+    cl_mem memObjects[3] = {*memObj0, *memObj1, *memObj2};
+    float result[ARRAY_SIZE];
 
-	// Setup timing
-	using std::chrono::high_resolution_clock;
-  using std::chrono::duration_cast;
-  using std::chrono::duration;
-  using std::chrono::milliseconds;
+    // Setup timing
+    using std::chrono::high_resolution_clock;
+    using std::chrono::duration_cast;
+    using std::chrono::duration;
+    using std::chrono::milliseconds;
 
-	// Create kernel object
-	*kernel = clCreateKernel(*program, kernel_str, NULL);
-	if (*kernel == NULL) {
-			std::cerr << "Failed to create " << kernel_str << std::endl;
-			Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
-			return -1;
-	}
+    // Create kernel object
+    *kernel = clCreateKernel(*program, kernel_str, NULL);
+    if (*kernel == NULL) {
+        std::cerr << "Failed to create " << kernel_str << std::endl;
+        Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
+        return -1;
+    }
 
-	// Set the kernel arguments (result, a, b)
-	errNum = clSetKernelArg(*kernel, 0, sizeof(cl_mem), &memObjects[0]);
-	errNum |= clSetKernelArg(*kernel, 1, sizeof(cl_mem), &memObjects[1]);
-	errNum |= clSetKernelArg(*kernel, 2, sizeof(cl_mem), &memObjects[2]);
-	if (errNum != CL_SUCCESS) {
-			std::cerr << "Error setting kernel arguments." << std::endl;
-			Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
-			return -1;
-	}
+    // Set the kernel arguments (result, a, b)
+    errNum = clSetKernelArg(*kernel, 0, sizeof(cl_mem), &memObjects[0]);
+    errNum |= clSetKernelArg(*kernel, 1, sizeof(cl_mem), &memObjects[1]);
+    errNum |= clSetKernelArg(*kernel, 2, sizeof(cl_mem), &memObjects[2]);
+    if (errNum != CL_SUCCESS) {
+        std::cerr << "Error setting kernel arguments." << std::endl;
+        Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
+        return -1;
+    }
 
-	size_t globalWorkSize[1] = {ARRAY_SIZE};
-	size_t localWorkSize[1] = {1};
+    size_t globalWorkSize[1] = {ARRAY_SIZE};
+    size_t localWorkSize[1] = {1};
 
-	// Start the clock
-  auto t1 = high_resolution_clock::now();
+    // Start the clock
+    auto t1 = high_resolution_clock::now();
 
-	// Queue the kernel up for execution across the array
-	errNum = clEnqueueNDRangeKernel(*commandQueue, *kernel, 1, NULL,
-																	globalWorkSize, localWorkSize,
-																	0, NULL, NULL);
-	if (errNum != CL_SUCCESS) {
-			std::cerr << "Error queuing kernel for execution." << std::endl;
-			Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
-			return -1;
-	}
+    // Queue the kernel up for execution across the array
+    errNum = clEnqueueNDRangeKernel(*commandQueue, *kernel, 1, NULL,
+                                    globalWorkSize, localWorkSize,
+                                    0, NULL, NULL);
+    if (errNum != CL_SUCCESS) {
+        std::cerr << "Error queuing kernel for execution." << std::endl;
+        Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
+        return -1;
+    }
 
-	// Read the output buffer back to the Host
-	errNum = clEnqueueReadBuffer(*commandQueue, memObjects[2], CL_TRUE,
-															 0, ARRAY_SIZE * sizeof(float), result,
-															 0, NULL, NULL);
-	if (errNum != CL_SUCCESS) {
-			std::cerr << "Error reading result buffer." << std::endl;
-			Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
-			return -1;
-	}
+    // Read the output buffer back to the Host
+    errNum = clEnqueueReadBuffer(*commandQueue, memObjects[2], CL_TRUE,
+                                 0, ARRAY_SIZE * sizeof(float), result,
+                                 0, NULL, NULL);
+    if (errNum != CL_SUCCESS) {
+        std::cerr << "Error reading result buffer." << std::endl;
+        Cleanup(*context, *commandQueue, *program, *kernel, memObjects);
+        return -1;
+    }
 
-	// Stop the clock
-	auto t2 = high_resolution_clock::now();
-  duration<double, std::milli> ms_double = t2 - t1;
+    // Stop the clock
+    auto t2 = high_resolution_clock::now();
+    duration<double, std::milli> ms_double = t2 - t1;
 
-	// return time in milliseconds
-	return ms_double.count();
+    // return time in milliseconds
+    return ms_double.count();
 }
 
 // The main func
@@ -277,11 +278,23 @@ int main(int argc, char *argv[]) {
     }
 
     // Execute and time each kernel
-		const char* kernel_str = "add_kernel";
-		double add_time = RunKernel(&context, &program, kernel_str, &kernel, &commandQueue, ARRAY_SIZE, &memObjects[0], &memObjects[1], &memObjects[2]);
+    double add_time = RunKernel(&context, &program, "add_kernel", &kernel, &commandQueue, ARRAY_SIZE, &memObjects[0],
+                                &memObjects[1], &memObjects[2]);
+    double sub_time = RunKernel(&context, &program, "sub_kernel", &kernel, &commandQueue, ARRAY_SIZE, &memObjects[0],
+                                &memObjects[1], &memObjects[2]);
+    double mult_time = RunKernel(&context, &program, "mult_kernel", &kernel, &commandQueue, ARRAY_SIZE, &memObjects[0],
+                                 &memObjects[1], &memObjects[2]);
+    double div_time = RunKernel(&context, &program, "div_kernel", &kernel, &commandQueue, ARRAY_SIZE, &memObjects[0],
+                                &memObjects[1], &memObjects[2]);
+    double pow_time = RunKernel(&context, &program, "pow_kernel", &kernel, &commandQueue, ARRAY_SIZE, &memObjects[0],
+                                &memObjects[1], &memObjects[2]);
 
     // Print kernel times
-		std::cout << "Addition Kernel: " << add_time << " (ms)..." << std::endl;
+    std::cout << "Addition Kernel: " << add_time << " (ms)..." << std::endl;
+    std::cout << "Subtraction Kernel: " << sub_time << " (ms)..." << std::endl;
+    std::cout << "Multiplication Kernel: " << mult_time << " (ms)..." << std::endl;
+    std::cout << "Division Kernel: " << div_time << " (ms)..." << std::endl;
+    std::cout << "Power Kernel: " << pow_time << " (ms)..." << std::endl;
 
     // Cleanup
     Cleanup(context, commandQueue, program, kernel, memObjects);
