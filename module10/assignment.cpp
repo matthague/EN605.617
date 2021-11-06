@@ -136,7 +136,7 @@ cl_program CreateProgram(cl_context context, cl_device_id device, const char* fi
 //  and b (input)
 //
 bool CreateMemObjects(cl_context context, cl_mem memObjects[3],
-                      float *a, float *b)
+                      float *a, float *b, int ARRAY_SIZE)
 {
     memObjects[0] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
                                    sizeof(float) * ARRAY_SIZE, a, NULL);
@@ -242,7 +242,7 @@ int main(int argc, char* argv[])
         b[i] = (float) (i * 2);
     }
 
-    if (!CreateMemObjects(context, memObjects, a, b))
+    if (!CreateMemObjects(context, memObjects, a, b, ARRAY_SIZE))
     {
         Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
