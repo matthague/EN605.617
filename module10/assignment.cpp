@@ -3,7 +3,7 @@
 #include <sstream>
 #include <CL/cl.h>
 
-const int ARRAY_SIZE = 1000;
+const int DEFAULT_ARRAY_SIZE = 1000;
 
 cl_context CreateContext()
 {
@@ -188,6 +188,15 @@ int main(int argc, char* argv[])
     cl_mem memObjects[3] = { 0, 0, 0 };
     cl_int errNum;
 
+		// Get ARRAY_SIZE
+		const int ARRAY_SIZE;
+		if(argc > 2) {
+			 ARRAY_SIZE = atoi(argv[1]);
+		}	else {
+			 ARRAY_SIZE = DEFAULT_ARRAY_SIZE;
+		}
+		std::cout << "Using array size: " << ARRAY_SIZE << std::endl;
+
     // Create a context on first available platform
     context = CreateContext();
     if (context == NULL)
@@ -229,8 +238,8 @@ int main(int argc, char* argv[])
     float b[ARRAY_SIZE];
     for (int i = 0; i < ARRAY_SIZE; i++)
     {
-        a[i] = (float)i;
-        b[i] = (float)(i * 2);
+        a[i] = (float) i;
+        b[i] = (float) (i * 2);
     }
 
     if (!CreateMemObjects(context, memObjects, a, b))
@@ -238,6 +247,8 @@ int main(int argc, char* argv[])
         Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
     }
+
+		// Execute and time each kernel
 
     // Set the kernel arguments (result, a, b)
     errNum = clSetKernelArg(kernel, 0, sizeof(cl_mem), &memObjects[0]);
@@ -275,16 +286,9 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    // Output the result buffer
-    for (int i = 0; i < ARRAY_SIZE; i++)
-    {
-        std::cout << result[i] << " ";
-    }
-    std::cout << std::endl;
-    std::cout << "Executed program succesfully." << std::endl;
+		// TODO print times
 
 		// Cleanup
     Cleanup(context, commandQueue, program, kernel, memObjects);
-
     return 0;
 }

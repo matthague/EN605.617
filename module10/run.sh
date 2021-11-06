@@ -1,11 +1,11 @@
-make nppNvgraphAssignment
+make assignment
 
-echo -e "\n\nNPP/NVGRAPH DEMO 0\n"
-./nppNvgraphAssignment
+echo -e "\n\OpenCL Demo 0\n"
+./assignment
 
 
-echo -e "\n\nNPP/NVGRAPH DEMO 1\n"
-./nppNvgraphAssignment lena.pgm 128
+echo -e "\n\OpenCL Demo 1\n"
+./assignment 512
 
-echo -e "\n\nNPP/NVGRAPH DEMO 2\n"
-./nppNvgraphAssignment lena.pgm 128
+echo -e "\n\OpenCL Demo2\n"
+./assignment 65536
