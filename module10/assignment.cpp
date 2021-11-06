@@ -177,6 +177,39 @@ void Cleanup(cl_context context, cl_command_queue commandQueue,
 
 }
 
+int OpenCLSetup(cl_context* context, cl_command_queue* cq, cl_program* program,
+								cl_device_id* dev, cl_mem* memObjs, cl_kernel *add_kernel) {
+	// Create a context on first available platform
+	*context = CreateContext();
+	if (*context == NULL)
+	{
+			std::cerr << "Failed to create OpenCL context." << std::endl;
+			return 1;
+	}
+
+	// Create a command-queue on the first device available
+	*commandQueue = CreateCommandQueue(*context, device);
+	if (*commandQueue == NULL)
+	{
+			return 1;
+	}
+
+	// Create program from kernel source
+	*program = CreateProgram(*context, *device, "assignment.cl");
+	if (program == NULL)
+	{
+			return 1;
+	}
+
+	// Create kernel objects
+	*add_kernel = clCreateKernel(*program, "add_kernel", NULL);
+	if (kernel == NULL)
+	{
+			std::cerr << "Failed to create add kernel" << std::endl;
+			return 1;
+	}
+}
+
 // The main func
 int main(int argc, char* argv[])
 {
@@ -184,42 +217,15 @@ int main(int argc, char* argv[])
     cl_command_queue commandQueue = 0;
     cl_program program = 0;
     cl_device_id device = 0;
-    cl_kernel kernel = 0;
+    cl_kernel add_kernel = 0;
     cl_mem memObjects[3] = { 0, 0, 0 };
     cl_int errNum;
 
-    // Create a context on first available platform
-    context = CreateContext();
-    if (context == NULL)
-    {
-        std::cerr << "Failed to create OpenCL context." << std::endl;
-        return 1;
-    }
+		int err = OpenCLSetup(&context, &commandQueue, &program, &device, &memObjects, &add_kernel);
 
-    // Create a command-queue on the first device available
-    commandQueue = CreateCommandQueue(context, &device);
-    if (commandQueue == NULL)
-    {
-        Cleanup(context, commandQueue, program, kernel, memObjects);
-        return 1;
-    }
-
-    // Create program from kernel source
-    program = CreateProgram(context, device, "assignment.cl");
-    if (program == NULL)
-    {
-        Cleanup(context, commandQueue, program, kernel, memObjects);
-        return 1;
-    }
-
-    // Create kernel objects
-    kernel = clCreateKernel(program, "hello_kernel", NULL);
-    if (kernel == NULL)
-    {
-        std::cerr << "Failed to create kernel" << std::endl;
-        Cleanup(context, commandQueue, program, kernel, memObjects);
-        return 1;
-    }
+		if(err == 1) {
+			Cleanup(context, commandQueue, program, add_kernel, memObjects);
+		}
 
     // Create memory objects that will be used as arguments to
     // kernel.  First create host memory arrays that will be
