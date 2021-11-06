@@ -1,2 +1,9 @@
-all: assignment.c
-	gcc assignment.c -o assignment.exe
+CC = g++
+
+all: clean assignment
+
+assignment: assignment.cpp
+	$(CC) g++ -I/usr/local/cuda-8.0/targets/x86_64-linux/include assignment.cpp -lOpenCL -o HelloWorld
+
+clean:
+	rm -f *.o
