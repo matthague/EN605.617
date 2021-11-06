@@ -177,40 +177,6 @@ void Cleanup(cl_context context, cl_command_queue commandQueue,
 
 }
 
-int OpenCLSetup(cl_context* context, cl_command_queue* cq, cl_program* program,
-								cl_device_id* dev, cl_mem* memObjs[3], cl_kernel *add_kernel) {
-	// Create a context on first available platform
-	*context = CreateContext();
-	if (*context == NULL)
-	{
-			std::cerr << "Failed to create OpenCL context." << std::endl;
-			return 1;
-	}
-
-	// Create a command-queue on the first device available
-	*cq = CreateCommandQueue(*context, dev);
-	if (*cq == NULL)
-	{
-			return 1;
-	}
-
-	// Create program from kernel source
-	*program = CreateProgram(*context, *dev, "assignment.cl");
-	if (program == NULL)
-	{
-			return 1;
-	}
-
-	// Create kernel objects
-	*add_kernel = clCreateKernel(*program, "add_kernel", NULL);
-	if (add_kernel == NULL)
-	{
-			std::cerr << "Failed to create add kernel" << std::endl;
-			return 1;
-	}
-	return 0;
-}
-
 // The main func
 int main(int argc, char* argv[])
 {
@@ -222,11 +188,38 @@ int main(int argc, char* argv[])
     cl_mem memObjects[3] = { 0, 0, 0 };
     cl_int errNum;
 
-		int err = OpenCLSetup(&context, &commandQueue, &program, &device, &memObjects, &add_kernel);
+    // Create a context on first available platform
+    context = CreateContext();
+    if (context == NULL)
+    {
+        std::cerr << "Failed to create OpenCL context." << std::endl;
+        return 1;
+    }
 
-		if(err == 1) {
-			Cleanup(context, commandQueue, program, add_kernel, memObjects);
-		}
+    // Create a command-queue on the first device available
+    commandQueue = CreateCommandQueue(context, &device);
+    if (commandQueue == NULL)
+    {
+        Cleanup(context, commandQueue, program, kernel, memObjects);
+        return 1;
+    }
+
+    // Create program from kernel source
+    program = CreateProgram(context, device, "assignment.cl");
+    if (program == NULL)
+    {
+        Cleanup(context, commandQueue, program, kernel, memObjects);
+        return 1;
+    }
+
+    // Create kernel objects
+    kernel = clCreateKernel(program, "hello_kernel", NULL);
+    if (kernel == NULL)
+    {
+        std::cerr << "Failed to create kernel" << std::endl;
+        Cleanup(context, commandQueue, program, kernel, memObjects);
+        return 1;
+    }
 
     // Create memory objects that will be used as arguments to
     // kernel.  First create host memory arrays that will be
@@ -242,7 +235,7 @@ int main(int argc, char* argv[])
 
     if (!CreateMemObjects(context, memObjects, a, b))
     {
-        Cleanup(context, commandQueue, program, add_kernel, memObjects);
+        Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
     }
 
@@ -253,7 +246,7 @@ int main(int argc, char* argv[])
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error setting kernel arguments." << std::endl;
-        Cleanup(context, commandQueue, program, add_kernel, memObjects);
+        Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
     }
 
@@ -261,13 +254,13 @@ int main(int argc, char* argv[])
     size_t localWorkSize[1] = { 1 };
 
     // Queue the kernel up for execution across the array
-    errNum = clEnqueueNDRangeKernel(commandQueue, add_kernel, 1, NULL,
+    errNum = clEnqueueNDRangeKernel(commandQueue, kernel, 1, NULL,
                                     globalWorkSize, localWorkSize,
                                     0, NULL, NULL);
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error queuing kernel for execution." << std::endl;
-        Cleanup(context, commandQueue, program, add_kernel, memObjects);
+        Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
     }
 
@@ -278,7 +271,7 @@ int main(int argc, char* argv[])
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error reading result buffer." << std::endl;
-        Cleanup(context, commandQueue, program, add_kernel, memObjects);
+        Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
     }
 
@@ -291,7 +284,7 @@ int main(int argc, char* argv[])
     std::cout << "Executed program succesfully." << std::endl;
 
 		// Cleanup
-    Cleanup(context, commandQueue, program, add_kernel, memObjects);
+    Cleanup(context, commandQueue, program, kernel, memObjects);
 
     return 0;
 }
