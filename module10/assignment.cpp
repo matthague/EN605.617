@@ -178,7 +178,7 @@ void Cleanup(cl_context context, cl_command_queue commandQueue,
 }
 
 int OpenCLSetup(cl_context* context, cl_command_queue* cq, cl_program* program,
-								cl_device_id* dev, cl_mem[3]* memObjs, cl_kernel *add_kernel) {
+								cl_device_id* dev, cl_mem* memObjs[], cl_kernel *add_kernel) {
 	// Create a context on first available platform
 	*context = CreateContext();
 	if (*context == NULL)
