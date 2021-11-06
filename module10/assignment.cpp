@@ -188,14 +188,14 @@ int OpenCLSetup(cl_context* context, cl_command_queue* cq, cl_program* program,
 	}
 
 	// Create a command-queue on the first device available
-	*commandQueue = CreateCommandQueue(*context, device);
-	if (*commandQueue == NULL)
+	*cq = CreateCommandQueue(*context, dev);
+	if (*cq == NULL)
 	{
 			return 1;
 	}
 
 	// Create program from kernel source
-	*program = CreateProgram(*context, *device, "assignment.cl");
+	*program = CreateProgram(*context, *dev, "assignment.cl");
 	if (program == NULL)
 	{
 			return 1;
@@ -208,6 +208,7 @@ int OpenCLSetup(cl_context* context, cl_command_queue* cq, cl_program* program,
 			std::cerr << "Failed to create add kernel" << std::endl;
 			return 1;
 	}
+	return 0;
 }
 
 // The main func
