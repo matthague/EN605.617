@@ -280,8 +280,8 @@ int main(int argc, char *argv[]) {
 		const char* kernel_str = "add_kernel";
 		double add_time = RunKernel(&context, &program, kernel_str, &kernel, &commandQueue, ARRAY_SIZE, &memObjects[0], &memObjects[1], &memObjects[2]);
 
-    // TODO print times
-		std::cout << "Addition Kernel: " << add_time << " (ms)..." << endl;
+    // Print kernel times
+		std::cout << "Addition Kernel: " << add_time << " (ms)..." << std::endl;
 
     // Cleanup
     Cleanup(context, commandQueue, program, kernel, memObjects);
