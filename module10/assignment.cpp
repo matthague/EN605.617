@@ -163,8 +163,9 @@ void Cleanup(cl_context context, cl_command_queue commandQueue,
 int RunKernel(cl_context* context, cl_program* program, const char* kernel_str, cl_kernel* kernel, cl_command_queue *commandQueue, int ARRAY_SIZE, cl_mem* memObj0, cl_mem* memObj1, cl_mem* memObj2) {
 	cl_int errNum;
 	cl_mem memObjects[3] = {*memObj0, *memObj1, *memObj2};
-	// Create kernel objects
-
+	float result[ARRAY_SIZE];
+	
+	// Create kernel object
 	*kernel = clCreateKernel(*program, kernel_str, NULL);
 	if (*kernel == NULL) {
 			std::cerr << "Failed to create " << kernel_str << std::endl;
@@ -197,7 +198,7 @@ int RunKernel(cl_context* context, cl_program* program, const char* kernel_str, 
 
 	// Read the output buffer back to the Host
 	errNum = clEnqueueReadBuffer(*commandQueue, memObjects[2], CL_TRUE,
-															 0, ARRAY_SIZE * sizeof(float), result,
+															 0, ARRAY_SIZE * sizeof(float), *result,
 															 0, NULL, NULL);
 	if (errNum != CL_SUCCESS) {
 			std::cerr << "Error reading result buffer." << std::endl;
@@ -247,7 +248,6 @@ int main(int argc, char *argv[]) {
     }
 
     // Create memory objects that will be used as arguments to kernel.
-    float result[ARRAY_SIZE];
     float a[ARRAY_SIZE];
     float b[ARRAY_SIZE];
     for (int i = 0; i < ARRAY_SIZE; i++) {
