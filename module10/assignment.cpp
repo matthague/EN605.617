@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
     cl_int errNum;
 
 		// Get ARRAY_SIZE
-		const int ARRAY_SIZE;
+		int ARRAY_SIZE;
 		if(argc > 2) {
 			 ARRAY_SIZE = atoi(argv[1]);
 		}	else {
