@@ -203,7 +203,7 @@ int OpenCLSetup(cl_context* context, cl_command_queue* cq, cl_program* program,
 
 	// Create kernel objects
 	*add_kernel = clCreateKernel(*program, "add_kernel", NULL);
-	if (kernel == NULL)
+	if (add_kernel == NULL)
 	{
 			std::cerr << "Failed to create add kernel" << std::endl;
 			return 1;
@@ -242,7 +242,7 @@ int main(int argc, char* argv[])
 
     if (!CreateMemObjects(context, memObjects, a, b))
     {
-        Cleanup(context, commandQueue, program, kernel, memObjects);
+        Cleanup(context, commandQueue, program, add_kernel, memObjects);
         return 1;
     }
 
@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error setting kernel arguments." << std::endl;
-        Cleanup(context, commandQueue, program, kernel, memObjects);
+        Cleanup(context, commandQueue, program, add_kernel, memObjects);
         return 1;
     }
 
@@ -261,13 +261,13 @@ int main(int argc, char* argv[])
     size_t localWorkSize[1] = { 1 };
 
     // Queue the kernel up for execution across the array
-    errNum = clEnqueueNDRangeKernel(commandQueue, kernel, 1, NULL,
+    errNum = clEnqueueNDRangeKernel(commandQueue, add_kernel, 1, NULL,
                                     globalWorkSize, localWorkSize,
                                     0, NULL, NULL);
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error queuing kernel for execution." << std::endl;
-        Cleanup(context, commandQueue, program, kernel, memObjects);
+        Cleanup(context, commandQueue, program, add_kernel, memObjects);
         return 1;
     }
 
@@ -278,7 +278,7 @@ int main(int argc, char* argv[])
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error reading result buffer." << std::endl;
-        Cleanup(context, commandQueue, program, kernel, memObjects);
+        Cleanup(context, commandQueue, program, add_kernel, memObjects);
         return 1;
     }
 
@@ -291,7 +291,7 @@ int main(int argc, char* argv[])
     std::cout << "Executed program succesfully." << std::endl;
 
 		// Cleanup
-    Cleanup(context, commandQueue, program, kernel, memObjects);
+    Cleanup(context, commandQueue, program, add_kernel, memObjects);
 
     return 0;
 }
