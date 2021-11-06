@@ -188,9 +188,9 @@ int main(int argc, char* argv[])
     cl_mem memObjects[3] = { 0, 0, 0 };
     cl_int errNum;
 
-		// Get ARRAY_SIZE
+		// Get ARRAY_SIZE from args if specified
 		int ARRAY_SIZE;
-		if(argc > 2) {
+		if(argc > 1) {
 			 ARRAY_SIZE = atoi(argv[1]);
 		}	else {
 			 ARRAY_SIZE = DEFAULT_ARRAY_SIZE;
@@ -221,18 +221,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    // Create kernel objects
-    kernel = clCreateKernel(program, "hello_kernel", NULL);
-    if (kernel == NULL)
-    {
-        std::cerr << "Failed to create kernel" << std::endl;
-        Cleanup(context, commandQueue, program, kernel, memObjects);
-        return 1;
-    }
-
-    // Create memory objects that will be used as arguments to
-    // kernel.  First create host memory arrays that will be
-    // used to store the arguments to the kernel
+    // Create memory objects that will be used as arguments to kernel.
     float result[ARRAY_SIZE];
     float a[ARRAY_SIZE];
     float b[ARRAY_SIZE];
@@ -249,6 +238,15 @@ int main(int argc, char* argv[])
     }
 
 		// Execute and time each kernel
+
+		// Create kernel objects
+		kernel = clCreateKernel(program, "add_kernel", NULL);
+		if (kernel == NULL)
+		{
+				std::cerr << "Failed to create add kernel" << std::endl;
+				Cleanup(context, commandQueue, program, kernel, memObjects);
+				return 1;
+		}
 
     // Set the kernel arguments (result, a, b)
     errNum = clSetKernelArg(kernel, 0, sizeof(cl_mem), &memObjects[0]);
