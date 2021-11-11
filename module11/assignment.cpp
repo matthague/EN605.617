@@ -32,17 +32,7 @@
 // Constants
 const unsigned int inputSignalWidth  = 8;
 const unsigned int inputSignalHeight = 8;
-cl_uint inputSignal[inputSignalHeight][inputSignalWidth] =
-{
-	{3, 1, 1, 4, 8, 2, 1, 3},
-	{4, 2, 1, 1, 2, 1, 2, 3},
-	{4, 4, 4, 4, 3, 2, 2, 2},
-	{9, 8, 3, 8, 9, 0, 0, 0},
-	{9, 3, 3, 9, 0, 0, 0, 0},
-	{0, 9, 0, 8, 0, 0, 0, 0},
-	{3, 0, 8, 8, 9, 4, 4, 4},
-	{5, 9, 8, 1, 8, 1, 1, 1}
-};
+cl_uint inputSignal[inputSignalHeight][inputSignalWidth];
 
 const unsigned int maskWidth  = 7;
 const unsigned int maskHeight = 7;
@@ -101,6 +91,13 @@ int main(int argc, char** argv)
 	cl_mem inputSignalBuffer;
 	cl_mem outputSignalBuffer;
 	cl_mem maskBuffer;
+
+  // TESTING TODO
+  for(unsigned int i = 0; i < inputSignalHeight; i++) {
+    for(unsigned int j = 0; j < inputSignalWidth; j++) {
+      inputSignal[i][j] = 0;
+    }
+  }
 
     // First, select an OpenCL platform to run on.
 	errNum = clGetPlatformIDs(0, NULL, &numPlatforms);
@@ -162,8 +159,8 @@ int main(int argc, char** argv)
 		&errNum);
 	checkErr(errNum, "clCreateContext");
 
-	std::ifstream srcFile("Convolution.cl");
-    checkErr(srcFile.is_open() ? CL_SUCCESS : -1, "reading Convolution.cl");
+	std::ifstream srcFile("assignment.cl");
+    checkErr(srcFile.is_open() ? CL_SUCCESS : -1, "reading assignment.cl");
 
 	std::string srcProg(
         std::istreambuf_iterator<char>(srcFile),
