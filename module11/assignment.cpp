@@ -93,7 +93,7 @@ int main(int argc, char** argv)
 	cl_mem maskBuffer;
 
   // Set input signal as random
-  srand(time(0))
+  srand(time(0));
   for(unsigned int i = 0; i < inputSignalHeight; i++) {
     for(unsigned int j = 0; j < inputSignalWidth; j++) {
       inputSignal[i][j] = rand();
