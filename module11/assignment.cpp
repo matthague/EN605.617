@@ -286,8 +286,7 @@ int main(int argc, char **argv) {
     std::cout << std::endl << "Executed program succesfully." << std::endl;
 
     // Output timing info
-    std:
-    cout << "Kernel took: " << duration.count() << " (ms)" << std::endl;
+    std::cout << "Kernel took: " << duration.count() << " (ms)" << std::endl;
 
     return 0;
 }
