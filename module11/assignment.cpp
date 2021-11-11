@@ -92,7 +92,7 @@ int main(int argc, char** argv)
 	cl_mem outputSignalBuffer;
 	cl_mem maskBuffer;
 
-  // Set input signal as random between 0 and 99
+  // Set input signal as a random integer between 0 and 99
   srand(time(0));
   for(unsigned int i = 0; i < inputSignalHeight; i++) {
     for(unsigned int j = 0; j < inputSignalWidth; j++) {
@@ -254,6 +254,9 @@ int main(int argc, char** argv)
 	const size_t globalWorkSize[2] = { outputSignalWidth, outputSignalHeight };
     const size_t localWorkSize[2]  = { 1, 1 };
 
+    // Start the clock
+    auto t1 = high_resolution_clock::now();
+
     // Queue the kernel up for execution across the array
     errNum = clEnqueueNDRangeKernel(
 		queue,
@@ -266,6 +269,10 @@ int main(int argc, char** argv)
 		NULL,
 		NULL);
 	checkErr(errNum, "clEnqueueNDRangeKernel");
+
+  // Stop the clock
+    auto t2 = high_resolution_clock::now();
+    duration<double, std::milli> kernel_time = t2 - t1;
 
   // read the results
 	errNum = clEnqueueReadBuffer(
@@ -291,6 +298,9 @@ int main(int argc, char** argv)
 	}
 
     std::cout << std::endl << "Executed program succesfully." << std::endl;
+
+    // Output timing info
+    std:cout << "Kernel took: " << kernel_time.count() << " (ms)" << std::endl;
 
 	return 0;
 }
