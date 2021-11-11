@@ -199,7 +199,7 @@ int main(int argc, char **argv) {
             &errNum);
     checkErr(errNum, "clCreateKernel");
 
-    // Now allocate buffers
+    // Allocate device buffers
     inputSignalBuffer = clCreateBuffer(
             context,
             CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
@@ -262,7 +262,7 @@ int main(int argc, char **argv) {
     auto t2 = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2-t1);
 
-    // read the results
+    // Read the results
     errNum = clEnqueueReadBuffer(
             queue,
             outputSignalBuffer,
@@ -286,7 +286,7 @@ int main(int argc, char **argv) {
     std::cout << std::endl << "Executed program succesfully." << std::endl;
 
     // Output timing info
-    std::cout << "Kernel took: " << duration.count() << " (ms)" << std::endl;
+    std::cout << "Kernel took: " << duration.count() << " (microseconds)" << std::endl;
 
     return 0;
 }
