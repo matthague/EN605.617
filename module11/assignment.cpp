@@ -30,8 +30,8 @@
 #endif
 
 // Constants
-const unsigned int inputSignalWidth  = 8;
-const unsigned int inputSignalHeight = 8;
+const unsigned int inputSignalWidth  = 49;
+const unsigned int inputSignalHeight = 49;
 cl_uint inputSignal[inputSignalHeight][inputSignalWidth];
 
 const unsigned int maskWidth  = 7;
@@ -92,10 +92,11 @@ int main(int argc, char** argv)
 	cl_mem outputSignalBuffer;
 	cl_mem maskBuffer;
 
-  // TESTING TODO
+  // Set input signal as random
+  srand(time(0))
   for(unsigned int i = 0; i < inputSignalHeight; i++) {
     for(unsigned int j = 0; j < inputSignalWidth; j++) {
-      inputSignal[i][j] = 0;
+      inputSignal[i][j] = rand();
     }
   }
 
