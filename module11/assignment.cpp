@@ -92,11 +92,11 @@ int main(int argc, char** argv)
 	cl_mem outputSignalBuffer;
 	cl_mem maskBuffer;
 
-  // Set input signal as random
+  // Set input signal as random between 0 and 99
   srand(time(0));
   for(unsigned int i = 0; i < inputSignalHeight; i++) {
     for(unsigned int j = 0; j < inputSignalWidth; j++) {
-      inputSignal[i][j] = rand();
+      inputSignal[i][j] = rand() % 100;
     }
   }
 
