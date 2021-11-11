@@ -243,7 +243,7 @@ int main(int argc, char **argv) {
     const size_t localWorkSize[2] = {1, 1};
 
     // Start the clock
-    auto t1 = high_resolution_clock::now();
+    auto t1 = std::chrono::high_resolution_clock::now();
 
     // Queue the kernel up for execution across the array
     errNum = clEnqueueNDRangeKernel(
@@ -259,8 +259,8 @@ int main(int argc, char **argv) {
     checkErr(errNum, "clEnqueueNDRangeKernel");
 
     // Stop the clock
-    auto t2 = high_resolution_clock::now();
-    duration<double, std::milli> kernel_time = t2 - t1;
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2-t1);
 
     // read the results
     errNum = clEnqueueReadBuffer(
@@ -287,7 +287,7 @@ int main(int argc, char **argv) {
 
     // Output timing info
     std:
-    cout << "Kernel took: " << kernel_time.count() << " (ms)" << std::endl;
+    cout << "Kernel took: " << duration.count() << " (ms)" << std::endl;
 
     return 0;
 }
