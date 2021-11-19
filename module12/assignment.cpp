@@ -123,11 +123,11 @@ int main(int argc, char **argv) {
 
         queues.push_back(queue);
 
-        cl_kernel kernel = clCreateKernel(program, "square", &errNum);
-        checkErr(errNum, "clCreateKernel(square)");
+        cl_kernel kernel = clCreateKernel(program, "average", &errNum);
+        checkErr(errNum, "clCreateKernel(average)");
 
         errNum = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *) &buffers[i]);
-        checkErr(errNum, "clSetKernelArg(square)");
+        checkErr(errNum, "clSetKernelArg(average)");
 
         kernels.push_back(kernel);
     }
