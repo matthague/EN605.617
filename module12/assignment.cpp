@@ -149,7 +149,7 @@ int main(int argc, char **argv) {
     for (unsigned int i = 0; i < queues.size(); i++) {
         cl_event event;
 
-        size_t gWI = 6;
+        size_t gWI = 4;
 
         errNum = clEnqueueNDRangeKernel(
                 queues[i],
