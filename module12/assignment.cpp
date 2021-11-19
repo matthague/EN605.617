@@ -155,6 +155,7 @@ int main(int argc, char **argv) {
         cl_event event;
 
         size_t gWI = NUM_BUFFER_ELEMENTS;
+        size_t lWI = NUM_SUBBUFFER_ELEMENTS;
         size_t offset = j * NUM_SUBBUFFER_ELEMENTS;
 
         errNum = clEnqueueNDRangeKernel(
@@ -163,7 +164,7 @@ int main(int argc, char **argv) {
                 1,
                 &offset,
                 (const size_t *) &gWI,
-                (const size_t *) NULL,
+                (const size_t *) &lWI,
                 0,
                 0,
                 &event);
