@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
     for (unsigned int i = 0; i < numDevices * NUM_SUBBUFFERS; i++) {
         InfoDevice<cl_device_type>::display(deviceIDs[i], CL_DEVICE_TYPE, "CL_DEVICE_TYPE");
 
-        cl_command_queue queue = clCreateCommandQueue(context, deviceIDs[i], 0, &errNum);
+        cl_command_queue queue = clCreateCommandQueue(context, deviceIDs[i % NUM_SUBBUFFERS], 0, &errNum);
         checkErr(errNum, "clCreateCommandQueue");
 
         queues.push_back(queue);
