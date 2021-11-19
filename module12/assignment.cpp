@@ -93,20 +93,20 @@ int main(int argc, char **argv) {
     }
 
     // create buffers and sub-buffers
-    inputOutput = new int[NUM_BUFFER_ELEMENTS * numDevices];
+    inputOutput = new float[NUM_BUFFER_ELEMENTS * numDevices];
     for (unsigned int i = 0; i < NUM_BUFFER_ELEMENTS * numDevices; i++) {
         inputOutput[i] = i;
     }
 
     // create a single buffer to cover all the input data
-    cl_mem main_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices, NULL, &errNum);
+    cl_mem main_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(float) * NUM_BUFFER_ELEMENTS * numDevices, NULL, &errNum);
     checkErr(errNum, "clCreateBuffer");
 
     // now for each device, create NUM_SUBBUFFERS subbuffers
     for (unsigned int i = 0; i < numDevices * NUM_SUBBUFFERS; i++) {
         cl_buffer_region region = {
-                NUM_SUBBUFFER_ELEMENTS * i * sizeof(int),
-                NUM_SUBBUFFER_ELEMENTS * sizeof(int)
+                NUM_SUBBUFFER_ELEMENTS * i * sizeof(float),
+                NUM_SUBBUFFER_ELEMENTS * sizeof(float)
         };
         cl_mem buffer = clCreateSubBuffer(main_buffer, CL_MEM_READ_WRITE, CL_BUFFER_CREATE_TYPE_REGION, &region, &errNum);
         checkErr(errNum, "clCreateSubBuffer");
@@ -116,8 +116,6 @@ int main(int argc, char **argv) {
 
     // Create command queues
     for (unsigned int i = 0; i < numDevices * NUM_SUBBUFFERS; i++) {
-        //InfoDevice<cl_device_type>::display(deviceIDs[i % numDevices], CL_DEVICE_TYPE, "CL_DEVICE_TYPE");
-
         cl_command_queue queue = clCreateCommandQueue(context, deviceIDs[i % numDevices], 0, &errNum);
         checkErr(errNum, "clCreateCommandQueue");
 
@@ -132,14 +130,13 @@ int main(int argc, char **argv) {
         kernels.push_back(kernel);
     }
 
-
     // Write input data
     errNum = clEnqueueWriteBuffer(
           queues[queues.size() - 1],
           main_buffer,
           CL_TRUE,
           0,
-          sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices,
+          sizeof(float) * NUM_BUFFER_ELEMENTS * numDevices,
           (void *) inputOutput,
           0,
           NULL,
@@ -180,7 +177,7 @@ int main(int argc, char **argv) {
           main_buffer,
           CL_TRUE,
           0,
-          sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices,
+          sizeof(float) * NUM_BUFFER_ELEMENTS * numDevices,
           (void *) inputOutput,
           0,
           NULL,
