@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
                 1,
                 (const size_t *) &offset,
                 (const size_t *) &gWI,
-                &lWI,
+                &gWI,
                 0,
                 0,
                 &event);
