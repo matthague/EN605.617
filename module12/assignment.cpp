@@ -12,7 +12,7 @@
 #define NUM_BUFFER_ELEMENTS 16
 #define NUM_SUBBUFFER_ELEMENTS 2 // dimension of the subbuffer
 #define NUM_SUBBUFFERS 4
-#define NUM_ROUNDS 5
+#define NUM_ROUNDS 2
 
 // Function to check and handle OpenCL errors
 inline void
