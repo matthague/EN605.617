@@ -151,12 +151,13 @@ int main(int argc, char **argv) {
 
         //size_t gWI = NUM_BUFFER_ELEMENTS;
         size_t gWI = NUM_SUBBUFFER_ELEMENTS * NUM_BUFFER_ELEMENTS; // 2x2
+        size_t offset = i*gWI;
 
         errNum = clEnqueueNDRangeKernel(
                 queues[i],
                 kernels[i],
                 1,
-                i*gWI,
+                (const size_t *) &offset,
                 (const size_t *) &gWI,
                 NULL,
                 0,
