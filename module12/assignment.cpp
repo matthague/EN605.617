@@ -11,6 +11,7 @@
 
 #define NUM_BUFFER_ELEMENTS 16
 #define NUM_SUBBUFFER_ELEMENTS 2 // dimension of the subbuffer
+#define NUM_SUBBUFFERS 4
 
 // Function to check and handle OpenCL errors
 inline void
@@ -101,8 +102,8 @@ int main(int argc, char **argv) {
     cl_mem main_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices, NULL, &errNum);
     checkErr(errNum, "clCreateBuffer");
 
-    // now for all devices other than the first create a sub-buffer
-    for (unsigned int i = 0; i < numDevices; i++) {
+    // now for each device, create NUM_SUBBUFFERS subbuffers
+    for (unsigned int i = 0; i < numDevices * NUM_SUBBUFFERS; i++) {
         cl_buffer_region region = {
                 NUM_SUBBUFFER_ELEMENTS * i * sizeof(int),
                 NUM_SUBBUFFER_ELEMENTS * sizeof(int)
@@ -114,7 +115,7 @@ int main(int argc, char **argv) {
     }
 
     // Create command queues
-    for (unsigned int i = 0; i < numDevices; i++) {
+    for (unsigned int i = 0; i < numDevices * NUM_SUBBUFFERS; i++) {
         InfoDevice<cl_device_type>::display(deviceIDs[i], CL_DEVICE_TYPE, "CL_DEVICE_TYPE");
 
         cl_command_queue queue = clCreateCommandQueue(context, deviceIDs[i], 0, &errNum);
@@ -135,7 +136,7 @@ int main(int argc, char **argv) {
     // Write input data
     errNum = clEnqueueWriteBuffer(
           queues[numDevices - 1],
-          buffers[0],//main_buffer,
+          main_buffer,
           CL_TRUE,
           0,
           sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices,
@@ -145,7 +146,8 @@ int main(int argc, char **argv) {
           NULL);
 
     std::vector <cl_event> events;
-    // call kernel for each device
+
+    // call kernel for each subbuffer
     for (unsigned int i = 0; i < queues.size(); i++) {
         cl_event event;
 
