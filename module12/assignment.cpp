@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "info.hpp"
 
@@ -91,17 +92,17 @@ int main(int argc, char **argv) {
         checkErr(errNum, "clBuildProgram");
     }
 
-    // create buffers and sub-buffers
+    // Create buffers and sub-buffers
     inputOutput = new int[NUM_BUFFER_ELEMENTS * numDevices];
     for (unsigned int i = 0; i < NUM_BUFFER_ELEMENTS * numDevices; i++) {
         inputOutput[i] = i;
     }
 
-    // create a single buffer to cover all the input data
+    // Create a single buffer to cover all the input data
     cl_mem main_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices, NULL, &errNum);
     checkErr(errNum, "clCreateBuffer");
 
-    // now for each device, create NUM_SUBBUFFERS subbuffers
+    // Now for each device, create NUM_SUBBUFFERS subbuffers
     for (unsigned int i = 0; i < numDevices; i++) {
       for(unsigned int j = 0; j < NUM_SUBBUFFERS; j++) {
         cl_buffer_region region = {
@@ -156,6 +157,9 @@ int main(int argc, char **argv) {
 
     std::vector <cl_event> events;
 
+    // Start the clock
+    auto t1 = std::chrono::high_resolution_clock::now();
+
     // call kernel for each subbuffer on each device
     for (unsigned int i = 0; i < numDevices; i++) {
       for(unsigned int j = 0; j < NUM_SUBBUFFERS; j++) {
@@ -182,6 +186,10 @@ int main(int argc, char **argv) {
     // Technically don't need this as we are doing a blocking read with in-order queue.
     clWaitForEvents(events.size(), &events[0]);
 
+    // Stop the clock
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2-t1);
+
     // Read back computed data
     clEnqueueReadBuffer(
           queues[queues.size() - 1],
@@ -196,10 +204,13 @@ int main(int argc, char **argv) {
 
     // Display average
     for (unsigned i = 0; i < numDevices; i++) {
-        std::cout << "AVERAGE VALUE: " << (float)inputOutput[i*NUM_BUFFER_ELEMENTS]/NUM_BUFFER_ELEMENTS;
+        float average = ((float)inputOutput[i*NUM_BUFFER_ELEMENTS]) /NUM_BUFFER_ELEMENTS; // Divide as a float for accuracy
+        std::cout << "AVERAGE VALUE: " << average;
         std::cout << std::endl;
     }
-    std::cout << "Program completed successfully" << std::endl;
+    
+    // Output timing info
+    std::cout << "Kernel took: " << duration.count() << " (microseconds)" << std::endl;
 
     return 0;
 }
