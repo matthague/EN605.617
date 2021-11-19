@@ -11,7 +11,7 @@
 
 #define NUM_BUFFER_ELEMENTS 16
 #define NUM_SUBBUFFER_ELEMENTS 2 // dimension of the subbuffer
-#define NUM_SUBBUFFERS 16
+#define NUM_SUBBUFFERS 4
 
 // Function to check and handle OpenCL errors
 inline void
@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
 
     // Write input data
     errNum = clEnqueueWriteBuffer(
-          queues[numDevices - 1],
+          queues[queues.size() - 1],
           main_buffer,
           CL_TRUE,
           0,
@@ -172,7 +172,7 @@ int main(int argc, char **argv) {
 
     // Read back computed data
     clEnqueueReadBuffer(
-          queues[numDevices - 1],
+          queues[queues.size() - 1],
           main_buffer,
           CL_TRUE,
           0,
