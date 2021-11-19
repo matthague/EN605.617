@@ -10,7 +10,7 @@
 #define DEFAULT_USE_MAP false
 
 #define NUM_BUFFER_ELEMENTS 16
-#define NUM_SUBBUFFER_ELEMENTS 2 // dimension of the subbuffer
+#define NUM_SUBBUFFER_ELEMENTS 4 // 2 x 2 subbuffer
 #define NUM_SUBBUFFERS 4
 #define NUM_ROUNDS 2
 
@@ -104,7 +104,8 @@ int main(int argc, char **argv) {
     checkErr(errNum, "clCreateBuffer");
 
     // now for each device, create NUM_SUBBUFFERS subbuffers
-    for (unsigned int i = 0; i < numDevices * NUM_SUBBUFFERS; i++) {
+    for (unsigned int i = 0; i < numDevices; i++) {
+      for(unsigned int j = 0; j < NUM_SUBBUFFERS; j++) {
         cl_buffer_region region = {
                 NUM_SUBBUFFER_ELEMENTS * i * sizeof(int),
                 NUM_SUBBUFFER_ELEMENTS * sizeof(int)
@@ -113,11 +114,13 @@ int main(int argc, char **argv) {
         checkErr(errNum, "clCreateSubBuffer");
 
         buffers.push_back(buffer);
+      }
     }
 
     // Create command queues
-    for (unsigned int i = 0; i < numDevices * NUM_SUBBUFFERS; i++) {
-        cl_command_queue queue = clCreateCommandQueue(context, deviceIDs[i % numDevices], 0, &errNum);
+    for (unsigned int i = 0; i < numDevices; i++) {
+      for(unsigned int j = 0; j < NUM_SUBBUFFERS; j++) {
+        cl_command_queue queue = clCreateCommandQueue(context, deviceIDs[i], 0, &errNum);
         checkErr(errNum, "clCreateCommandQueue");
 
         queues.push_back(queue);
@@ -125,10 +128,11 @@ int main(int argc, char **argv) {
         cl_kernel kernel = clCreateKernel(program, "average", &errNum);
         checkErr(errNum, "clCreateKernel(average)");
 
-        errNum = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *) &buffers[i]);
+        errNum = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *) &buffers[i*numDevices + j]);
         checkErr(errNum, "clSetKernelArg(average)");
 
         kernels.push_back(kernel);
+      }
     }
 
     // Write input data
@@ -149,7 +153,7 @@ int main(int argc, char **argv) {
     for (unsigned int i = 0; i < queues.size(); i++) {
         cl_event event;
 
-        size_t gWI = 4;
+        size_t gWI = NUM_SUBBUFFER_ELEMENTS;
 
         errNum = clEnqueueNDRangeKernel(
                 queues[i],
