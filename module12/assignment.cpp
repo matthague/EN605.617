@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
     // Write input data
     errNum = clEnqueueWriteBuffer(
           queues[numDevices - 1],
-          main_buffer,
+          buffers[0],//main_buffer,
           CL_TRUE,
           0,
           sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices,
@@ -165,10 +165,8 @@ int main(int argc, char **argv) {
         events.push_back(event);
     }
 
-    // Technically don't need this as we are doing a blocking read
-    // with in-order queue.
+    // Technically don't need this as we are doing a blocking read with in-order queue.
     clWaitForEvents(events.size(), &events[0]);
-
 
     // Read back computed data
     clEnqueueReadBuffer(
