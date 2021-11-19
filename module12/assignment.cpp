@@ -150,13 +150,12 @@ int main(int argc, char **argv) {
         cl_event event;
 
         size_t gWI = 6;
-        size_t offset = i*gWI;
 
         errNum = clEnqueueNDRangeKernel(
                 queues[i],
                 kernels[i],
                 1,
-                (const size_t *) &offset,
+                NULL,
                 (const size_t *) &gWI,
                 &gWI,
                 0,
