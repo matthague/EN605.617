@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
     int platform = DEFAULT_PLATFORM;
     bool useMap = DEFAULT_USE_MAP;
 
-    std::cout << "Simple buffer and sub-buffer Example" << std::endl;
+    std::cout << "MODIFIED buffer and sub-buffer Example" << std::endl;
 
     for (int i = 1; i < argc; i++) {
         std::string input(argv[i]);
@@ -120,8 +120,8 @@ int main(int argc, char **argv) {
     // now for all devices other than the first create a sub-buffer
     for (unsigned int i = 0; i < numDevices; i++) {
         cl_buffer_region region = {
-                NUM_BUFFER_ELEMENTS * i * sizeof(int),
-                NUM_BUFFER_ELEMENTS * sizeof(int)
+                NUM_SUBBUFFER_ELEMENTS * i * sizeof(int),
+                NUM_SUBBUFFER_ELEMENTS * sizeof(int)
         };
         cl_mem buffer = clCreateSubBuffer(main_buffer, CL_MEM_READ_WRITE, CL_BUFFER_CREATE_TYPE_REGION, &region, &errNum);
         checkErr(errNum, "clCreateSubBuffer");
