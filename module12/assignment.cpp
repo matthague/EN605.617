@@ -12,6 +12,7 @@
 #define NUM_BUFFER_ELEMENTS 16
 #define NUM_SUBBUFFER_ELEMENTS 2 // dimension of the subbuffer
 #define NUM_SUBBUFFERS 4
+#define NUM_ROUNDS 5
 
 // Function to check and handle OpenCL errors
 inline void
@@ -34,7 +35,7 @@ int main(int argc, char **argv) {
     std::vector <cl_kernel> kernels;
     std::vector <cl_command_queue> queues;
     std::vector <cl_mem> buffers;
-    int *inputOutput;
+    float *inputOutput;
 
     int platform = DEFAULT_PLATFORM;
 
@@ -144,7 +145,8 @@ int main(int argc, char **argv) {
 
     std::vector <cl_event> events;
 
-    for(int k = 0; k < 6; k++){
+    // call the averageing kernels NUM_ROUNDS times (to get better average)
+    for(int k = 0; k < NUM_ROUNDS; k++){
 
     // call kernel for each subbuffer on each device
     for (unsigned int i = 0; i < queues.size(); i++) {
