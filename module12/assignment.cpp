@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
 
     // Create command queues
     for (unsigned int i = 0; i < numDevices * NUM_SUBBUFFERS; i++) {
-        InfoDevice<cl_device_type>::display(deviceIDs[i % numDevices], CL_DEVICE_TYPE, "CL_DEVICE_TYPE");
+        //InfoDevice<cl_device_type>::display(deviceIDs[i % numDevices], CL_DEVICE_TYPE, "CL_DEVICE_TYPE");
 
         cl_command_queue queue = clCreateCommandQueue(context, deviceIDs[i % numDevices], 0, &errNum);
         checkErr(errNum, "clCreateCommandQueue");
@@ -147,6 +147,8 @@ int main(int argc, char **argv) {
 
     std::vector <cl_event> events;
 
+    for(int k = 0; k < 2; k++){
+
     // call kernel for each subbuffer on each device
     for (unsigned int i = 0; i < queues.size(); i++) {
         cl_event event;
@@ -166,6 +168,8 @@ int main(int argc, char **argv) {
 
         events.push_back(event);
     }
+
+  }
 
     // Technically don't need this as we are doing a blocking read with in-order queue.
     clWaitForEvents(events.size(), &events[0]);
