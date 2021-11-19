@@ -187,11 +187,9 @@ int main(int argc, char **argv) {
           NULL,
           NULL);
 
-    // Display output in rows
+    // Display average
     for (unsigned i = 0; i < numDevices; i++) {
-        for (unsigned elems = i * NUM_BUFFER_ELEMENTS; elems < ((i + 1) * NUM_BUFFER_ELEMENTS); elems++) {
-            std::cout << " " << inputOutput[elems];
-        }
+        std::cout << " " << (float)inputOutput[i*NUM_BUFFER_ELEMENTS]/NUM_BUFFER_ELEMENTS;
         std::cout << std::endl;
     }
     std::cout << "Program completed successfully" << std::endl;
