@@ -61,8 +61,6 @@ int main(int argc, char **argv) {
     size_t length = srcProg.length();
 
     deviceIDs = NULL;
-    DisplayPlatformInfo(platformIDs[platform], CL_PLATFORM_VENDOR, "CL_PLATFORM_VENDOR");
-
     errNum = clGetDeviceIDs(platformIDs[platform], CL_DEVICE_TYPE_ALL, 0, NULL, &numDevices);
     if (errNum != CL_SUCCESS && errNum != CL_DEVICE_NOT_FOUND) {
         checkErr(errNum, "clGetDeviceIDs");
@@ -136,12 +134,11 @@ int main(int argc, char **argv) {
     }
 
     // Display input data
-    std::cout << "INPUT DATA: " << std::end;
+    std::cout << "INPUT DATA: " << std::endl;
     for (unsigned i = 0; i < numDevices; i++) {
         for (unsigned elems = i * NUM_BUFFER_ELEMENTS; elems < ((i + 1) * NUM_BUFFER_ELEMENTS); elems++) {
             std::cout << " " << inputOutput[elems];
         }
-
         std::cout << std::endl;
     }
 
