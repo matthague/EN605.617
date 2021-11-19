@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     std::vector <cl_kernel> kernels;
     std::vector <cl_command_queue> queues;
     std::vector <cl_mem> buffers;
-    float *inputOutput;
+    int *inputOutput;
 
     int platform = DEFAULT_PLATFORM;
 
@@ -94,20 +94,20 @@ int main(int argc, char **argv) {
     }
 
     // create buffers and sub-buffers
-    inputOutput = new float[NUM_BUFFER_ELEMENTS * numDevices];
+    inputOutput = new int[NUM_BUFFER_ELEMENTS * numDevices];
     for (unsigned int i = 0; i < NUM_BUFFER_ELEMENTS * numDevices; i++) {
         inputOutput[i] = i;
     }
 
     // create a single buffer to cover all the input data
-    cl_mem main_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(float) * NUM_BUFFER_ELEMENTS * numDevices, NULL, &errNum);
+    cl_mem main_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices, NULL, &errNum);
     checkErr(errNum, "clCreateBuffer");
 
     // now for each device, create NUM_SUBBUFFERS subbuffers
     for (unsigned int i = 0; i < numDevices * NUM_SUBBUFFERS; i++) {
         cl_buffer_region region = {
-                NUM_SUBBUFFER_ELEMENTS * i * sizeof(float),
-                NUM_SUBBUFFER_ELEMENTS * sizeof(float)
+                NUM_SUBBUFFER_ELEMENTS * i * sizeof(int),
+                NUM_SUBBUFFER_ELEMENTS * sizeof(int)
         };
         cl_mem buffer = clCreateSubBuffer(main_buffer, CL_MEM_READ_WRITE, CL_BUFFER_CREATE_TYPE_REGION, &region, &errNum);
         checkErr(errNum, "clCreateSubBuffer");
@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
           main_buffer,
           CL_TRUE,
           0,
-          sizeof(float) * NUM_BUFFER_ELEMENTS * numDevices,
+          sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices,
           (void *) inputOutput,
           0,
           NULL,
@@ -152,7 +152,7 @@ int main(int argc, char **argv) {
     for (unsigned int i = 0; i < queues.size(); i++) {
         cl_event event;
 
-        size_t gWI = NUM_BUFFER_ELEMENTS;
+        size_t gWI = NUM_SUBBUFFER_ELEMENTS * NUM_SUBBUFFER_ELEMENTS; // 2 x 2
 
         errNum = clEnqueueNDRangeKernel(
                 queues[i],
@@ -179,7 +179,7 @@ int main(int argc, char **argv) {
           main_buffer,
           CL_TRUE,
           0,
-          sizeof(float) * NUM_BUFFER_ELEMENTS * numDevices,
+          sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices,
           (void *) inputOutput,
           0,
           NULL,
