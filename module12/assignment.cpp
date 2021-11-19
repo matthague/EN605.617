@@ -145,14 +145,12 @@ int main(int argc, char **argv) {
 
     std::vector <cl_event> events;
 
-    // call the averageing kernels NUM_ROUNDS times (to get better average)
-    for(int k = 0; k < NUM_ROUNDS; k++){
-
     // call kernel for each subbuffer on each device
     for (unsigned int i = 0; i < queues.size(); i++) {
         cl_event event;
 
         size_t gWI = NUM_BUFFER_ELEMENTS;
+        size_t lWI = NUM_SUBBUFFER_ELEMENTS * NUM_BUFFER_ELEMENTS; // 2x2
 
         errNum = clEnqueueNDRangeKernel(
                 queues[i],
@@ -160,15 +158,13 @@ int main(int argc, char **argv) {
                 1,
                 NULL,
                 (const size_t *) &gWI,
-                (const size_t *) NULL,
+                (const size_t *) lWI,
                 0,
                 0,
                 &event);
 
         events.push_back(event);
     }
-
-  }
 
     // Technically don't need this as we are doing a blocking read with in-order queue.
     clWaitForEvents(events.size(), &events[0]);
