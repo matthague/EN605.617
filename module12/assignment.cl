@@ -1,6 +1,6 @@
 __kernel void average(__global * buffer) {
-    size_t id = get_global_id(0) * (sizeof(float));
-		buffer[id] = (buffer[id]);
+    size_t id = get_global_id(0) * (sizeof(float) * 2);
+		buffer[id] = (buffer[id] * buffer[id]);
 		/*
 		if(id == 15) {
 				buffer[id] = (buffer[id] + buffer[id - 1]) / 2;
