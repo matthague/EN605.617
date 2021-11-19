@@ -152,7 +152,7 @@ int main(int argc, char **argv) {
     for (unsigned int i = 0; i < queues.size(); i++) {
         cl_event event;
 
-        size_t gWI = NUM_SUBBUFFER_ELEMENTS * NUM_SUBBUFFER_ELEMENTS; // 2 x 2
+        size_t gWI = NUM_BUFFER_ELEMENTS;
 
         errNum = clEnqueueNDRangeKernel(
                 queues[i],
