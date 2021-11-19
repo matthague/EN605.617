@@ -157,7 +157,7 @@ int main(int argc, char **argv) {
                 1,
                 NULL,
                 (const size_t *) &gWI,
-                &gWI,
+                (const size_t *) NULL,
                 0,
                 0,
                 &event);
