@@ -36,24 +36,8 @@ int main(int argc, char **argv) {
     int *inputOutput;
 
     int platform = DEFAULT_PLATFORM;
-    bool useMap = DEFAULT_USE_MAP;
 
     std::cout << "MODIFIED buffer and sub-buffer Example" << std::endl;
-
-    for (int i = 1; i < argc; i++) {
-        std::string input(argv[i]);
-
-        if (!input.compare("--platform")) {
-            input = std::string(argv[++i]);
-            std::istringstream buffer(input);
-            buffer >> platform;
-        } else if (!input.compare("--useMap")) {
-            useMap = true;
-        } else {
-            std::cout << "usage: --platform n --useMap" << std::endl;
-            return 0;
-        }
-    }
 
     // First, select an OpenCL platform to run on.
     errNum = clGetPlatformIDs(0, NULL, &numPlatforms);
@@ -147,45 +131,18 @@ int main(int argc, char **argv) {
         kernels.push_back(kernel);
     }
 
-    if (useMap) {
-        cl_int *mapPtr = (cl_int *) clEnqueueMapBuffer(
-                queues[numDevices - 1],
-                main_buffer,
-                CL_TRUE,
-                CL_MAP_WRITE,
-                0,
-                sizeof(cl_int) * NUM_BUFFER_ELEMENTS * numDevices,
-                0,
-                NULL,
-                NULL,
-                &errNum);
-        checkErr(errNum, "clEnqueueMapBuffer(..)");
 
-        for (unsigned int i = 0; i < NUM_BUFFER_ELEMENTS * numDevices; i++) {
-            mapPtr[i] = inputOutput[i];
-        }
-
-        errNum = clEnqueueUnmapMemObject(
-                queues[numDevices - 1],
-                main_buffer,
-                mapPtr,
-                0,
-                NULL,
-                NULL);
-        checkErr(errNum, "clEnqueueUnmapMemObject(..)");
-    } else {
-        // Write input data
-        errNum = clEnqueueWriteBuffer(
-                queues[numDevices - 1],
-                main_buffer,
-                CL_TRUE,
-                0,
-                sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices,
-                (void *) inputOutput,
-                0,
-                NULL,
-                NULL);
-    }
+    // Write input data
+    errNum = clEnqueueWriteBuffer(
+          queues[numDevices - 1],
+          main_buffer,
+          CL_TRUE,
+          0,
+          sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices,
+          (void *) inputOutput,
+          0,
+          NULL,
+          NULL);
 
     std::vector <cl_event> events;
     // call kernel for each device
@@ -212,46 +169,18 @@ int main(int argc, char **argv) {
     // with in-order queue.
     clWaitForEvents(events.size(), &events[0]);
 
-    if (useMap) {
-        cl_int *mapPtr = (cl_int *) clEnqueueMapBuffer(
-                queues[numDevices - 1],
-                main_buffer,
-                CL_TRUE,
-                CL_MAP_READ,
-                0,
-                sizeof(cl_int) * NUM_BUFFER_ELEMENTS * numDevices,
-                0,
-                NULL,
-                NULL,
-                &errNum);
-        checkErr(errNum, "clEnqueueMapBuffer(..)");
 
-        for (unsigned int i = 0; i < NUM_BUFFER_ELEMENTS * numDevices; i++) {
-            inputOutput[i] = mapPtr[i];
-        }
-
-        errNum = clEnqueueUnmapMemObject(
-                queues[numDevices - 1],
-                main_buffer,
-                mapPtr,
-                0,
-                NULL,
-                NULL);
-
-        clFinish(queues[numDevices - 1]);
-    } else {
-        // Read back computed data
-        clEnqueueReadBuffer(
-                queues[numDevices - 1],
-                main_buffer,
-                CL_TRUE,
-                0,
-                sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices,
-                (void *) inputOutput,
-                0,
-                NULL,
-                NULL);
-    }
+    // Read back computed data
+    clEnqueueReadBuffer(
+          queues[numDevices - 1],
+          main_buffer,
+          CL_TRUE,
+          0,
+          sizeof(int) * NUM_BUFFER_ELEMENTS * numDevices,
+          (void *) inputOutput,
+          0,
+          NULL,
+          NULL);
 
     // Display output in rows
     for (unsigned i = 0; i < numDevices; i++) {
