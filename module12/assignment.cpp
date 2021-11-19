@@ -125,11 +125,11 @@ int main(int argc, char **argv) {
 
         queues.push_back(queue);
 
-        cl_kernel kernel = clCreateKernel(program, "average", &errNum);
-        checkErr(errNum, "clCreateKernel(average)");
+        cl_kernel kernel = clCreateKernel(program, "average_helper", &errNum);
+        checkErr(errNum, "clCreateKernel(average_helper)");
 
         errNum = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *) &buffers[i*numDevices + j]);
-        checkErr(errNum, "clSetKernelArg(average)");
+        checkErr(errNum, "clSetKernelArg(average_helper)");
 
         kernels.push_back(kernel);
       }
