@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
 
     std::vector <cl_event> events;
 
-    // call kernel for each subbuffer
+    // call kernel for each subbuffer on each device
     for (unsigned int i = 0; i < queues.size(); i++) {
         cl_event event;
 
