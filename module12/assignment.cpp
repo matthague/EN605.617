@@ -154,7 +154,7 @@ int main(int argc, char **argv) {
       for(unsigned int j = 0; j < NUM_SUBBUFFERS; j++) {
         cl_event event;
 
-        size_t gWI = NUM_BUFFER_ELEMENTS;
+        //size_t gWI = NUM_BUFFER_ELEMENTS;
         size_t lWI = NUM_SUBBUFFER_ELEMENTS;
         size_t offset = j * NUM_SUBBUFFER_ELEMENTS;
 
@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
                 kernels[i*numDevices + j],
                 1,
                 &offset,
-                (const size_t *) &gWI,
+                (const size_t *) &lWI,
                 (const size_t *) &lWI,
                 0,
                 0,
