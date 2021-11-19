@@ -156,7 +156,7 @@ int main(int argc, char **argv) {
                 queues[i],
                 kernels[i],
                 1,
-                NULL,
+                i*gWI,
                 (const size_t *) &gWI,
                 NULL,
                 0,
